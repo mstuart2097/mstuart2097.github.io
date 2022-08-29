@@ -1,16 +1,16 @@
 <STYLE TEXT="text/css">
 <!--
-BODY {background: #FFFFFF; font-family: times}
+BODY {background: #FFFFFF; font-family: sans-serif}
 A:link {color: #000000}
 A:visited {color: #000000}
-A {font-size: 12pt; font-family: times}
-H1 {font-size: 24pt; font-family: times; margin-left: 20px}
-H2 {font-size: 14pt; font-family: times; margin-left: 20px}
-H3 {font-size: 14pt; font-family: times; margin-left: 20px}
-P {font-size: 14pt; font-family: times; line-height: 25px;
+A {font-size: 12pt; font-family: sans-serif}
+H1 {font-size: 24pt; font-family: sans-serif; margin-left: 20px}
+H2 {font-size: 14pt; font-family: sans-serif; margin-left: 20px}
+H3 {font-size: 14pt; font-family: sans-serif; margin-left: 20px}
+P {font-size: 14pt; font-family: sans-serif; line-height: 25px;
    margin-left: 40px; margin-right: 250px; margin-top: 10px}
-UL > LI {font-family: arial; line-height: 25px}
-OL > LI {font-family: arial; line-height: 25px}
+UL > LI {font-family: sans-serif; line-height: 25px}
+OL > LI {font-family: sans-serif; line-height: 25px}
 
 #menu { 
     width: auto;
@@ -18,7 +18,7 @@ OL > LI {font-family: arial; line-height: 25px}
     font-size: 16px;
     font-family: times;
     text-align: left;
-    background-color: #0000FF;
+    background-color: #922247;
 }
 #menu ul {
     height: auto;
