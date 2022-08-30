@@ -12,6 +12,11 @@ P {font-size: 14pt; font-family: sans-serif; line-height: 25px;
 UL > LI {font-family: sans-serif; line-height: 25px}
 OL > LI {font-family: sans-serif; line-height: 25px}
 
+img {
+  width: 400px,
+  height: 300px
+}
+
 #menu { 
     width: auto;
     height: 40px;
