@@ -49,9 +49,10 @@ knitr::opts_chunk$set(echo = TRUE, cache = TRUE, include = TRUE, fig.align="cent
 ```{r, include = TRUE}
 # This is a very common R package that easily creates tidy data easier for
 # analysis and make beautiful graphs!
-# library(tidyverse)
+library(tidyverse)
 
 # This tells R to find all files in the below folder
+# Please change this to set the working directory on your personal computer
 setwd("C:/Users/mstuart1/OneDrive - Loyola University Chicago/Classes/Fall 2022/STAT 308/Chapter 3")
 # Slashes must be either \\ or / for R to read it
 
