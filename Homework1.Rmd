@@ -1,0 +1,88 @@
+---
+title: "STAT 308 -- Homework 1"
+author: Your Name
+output: pdf_document
+---
+
+```{r setup, include=FALSE}
+knitr::opts_chunk$set(echo = FALSE)
+```
+
+For the problems in which calculations are needed, please include your \texttt{R} code with your answers, otherwise you will not be given full credit.  Please upload your assignment by Thursday, September 8, 11:59 pm in a pdf file to Sakai.
+
+- 1.
+Assume that $Z$ is a random variable from the standard normal (i.e. $\mu = 0$, $\sigma = 1$).
+
+-- a.
+Calculate $P(Z \geq -1)$.
+```{r}
+# Write your R code to answer the question here.
+```
+-- b.
+Determine the $0.2-$quantile of $Z$.
+```{r}
+# Write your R code to answer the question here.
+```
+
+- 2.
+$F_{a,b}$ is a random variable from the $F$-distribution with $df1 = a$ and $df2 = b$.
+
+-- a.
+Calculate $P(F_{5,40} \leq 2.9)$
+```{r}
+# Write your R code to answer the question here.
+```
+-- b.
+Find $x$ such that $P(F_{6,24} \geq x) = 0.05$
+```{r}
+# Write your R code to answer the question here.
+```
+
+- 3.
+Given a dataset of scores $\{0,2,5,6,3,3,3,1,4,3\}$, calculate the
+
+-- a.
+mean,
+```{r}
+# Write your R code to answer the question here.
+```
+-- b.
+median,
+```{r}
+# Write your R code to answer the question here.
+```
+-- c.
+variance.
+```{r}
+# Write your R code to answer the question here.
+```
+
+- 4.
+A random sample of 32 persons attending a certain diet clinic was found to have lost an average of 30 pounds over a three week period, with a sample standard deviation of 11 pounds. For these data
+
+-- a.
+Calculate a 99% confidence interval for the given data.
+```{r}
+# Write your R code to answer the question here.
+```
+-- b.
+Interpret the confidence interval in the context of the given problem.
+
+-- c.
+Suppose I wished to test my current belief that the average weight loss of the population is equal to 28 pounds.  I come to the conclusion to reject $H_0: \mu = 28$.  Based on your answer to (b), why does this make sense?
+
+- 5.
+An outbreak of Salmonella-related illness was thought to be do pre-cut melons from a specific factory.  Several samples were collected and can be found in the file \texttt{salmonella.csv} on the course webpage.  A Salmonella level (in MPN/g) greater than 0.3 MPN/g is considered dangerous. To demonstrate that the levels are safe we want to show the mean level is less than 0.3 MPN/g.
+
+-- a.
+State the null and directional alternative hypothesis in symbols.  Explicitly define $\mu$.
+
+-- b.
+Find the test statistic and p-value for the data below.  Be sure to clearly identify them from your output.  Note you are performing a one-sided test.
+```{r}
+# Write your R code to answer the question here.
+```
+
+-- c.
+State your decision and conclusion for the given problem.
+
