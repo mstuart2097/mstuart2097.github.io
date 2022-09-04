@@ -72,7 +72,7 @@ Interpret the confidence interval in the context of the given problem.
 Suppose I wished to test my current belief that the average weight loss of the population is equal to 28 pounds.  I come to the conclusion to reject $H_0: \mu = 28$.  Based on your answer to (b), does this make sense?  Why or why not?
 
 - 5.
-An outbreak of Salmonella-related illness was thought to be do pre-cut melons from a specific factory.  Several samples were collected and can be found in the file \texttt{salmonella.csv} on the course webpage.  A Salmonella level (in MPN/g) greater than 0.3 MPN/g is considered dangerous. To demonstrate that the levels are safe we want to show the mean level is less than 0.3 MPN/g.
+An outbreak of Salmonella-related illness was thought to be caused by pre-cut melons from a specific factory.  Several samples were collected and can be found in the file \texttt{salmonella.csv} on the course webpage.  A Salmonella level (in MPN/g) greater than 0.3 MPN/g is considered dangerous. To demonstrate that the levels are safe we want to show the mean level is less than 0.3 MPN/g.
 
 -- a.
 State the null and directional alternative hypothesis in symbols.  Explicitly define $\mu$.
