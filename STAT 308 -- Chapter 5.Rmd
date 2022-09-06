@@ -59,7 +59,7 @@ data.frame(x=x,y=y_pos) %>%
 ```
 - Non-linear - Can reasonably make out a pattern that is non-linear (parabolic, exponential, logaritmic, etc.)
 ```{r, echo=FALSE}
-data.frame(x=x,y=y_exp) %>% 
+data.frame(x=x,y=y_par) %>% 
   ggplot(aes(x=x,y=y)) + 
   geom_point()
 ```
