@@ -1,0 +1,61 @@
+---
+title: "STAT 308 -- Homework 3"
+output: pdf_document
+---
+
+```{r setup, include=FALSE}
+knitr::opts_chunk$set(echo = TRUE, include = TRUE,
+fig.align="center",warnings = FALSE,fig.width = 5,fig.height=3)
+```
+
+For the problems in which calculations are needed, please include your \texttt{R} code with your answers, otherwise you will not be given full credit.  Please upload your assignment by Thursday, September 22, 11:59 pm in a pdf file to Sakai.
+
+- 1. Suppose we perform a simple linear regression where $$n=50, \bar{x} = -0.208, \bar{y} = 1.516, s_x = 2.354, s_y = 3.185$$ $$\hat{\beta}_0 = 1.745, \hat{\beta}_1 = 1.102, s_{Y|X} = 1.868,s_{\hat{\beta}_0} = 0.265, s_{\hat{\beta}_1} = 0.113$$
+
+-- a. Calculate a 95% confidence interval for $\beta_1$.
+```{r}
+# Write your code below this line
+```
+
+-- b. Find a test statistic and p-value for testing $H_0: \beta_1 = 0$ vs. $H_a: \beta_1 > 0$.
+```{r}
+# Write your code below this line
+```
+
+-- c. Calculate a 95% confidence interval for $\mu_{Y|X}$ when $x = 3$.
+```{r}
+# Write your code below this line
+```
+
+-- d. Calculate a 95% prediction interval for $Y$ when $x = 3$.
+```{r}
+# Write your code below this line
+```
+
+- 2. Suppose I have a dataset, for which I perform a simple linear regression of $Y$ on $X$.
+
+-- a. I calculate 95% confidence and prediction intervals for our predicted value of $Y$ for $x = 2$, which gives us $\hat{Y}_{x=2} = -2.199$, and our two intervals (-2.59,-1.80) and (-4.25,-0.14).  Which one is the prediction interval?  Explain your reasoning.
+
+-- b. Now, suppose I wish to calculate a 95% confidence interval for the predicted value of $Y$ for $x = \bar{x}$.  Will this width of this confidence interval (the difference between upper and lower values of the interval) be larger or smaller?  Explain your reasoning.
+
+- 3. Reconsider the dataset \texttt{AdRevenue.csv} as well as our simple linear regression model of ad revenue (in millions of dollars) based on circulation (in millions).
+
+-- a. Calculate a 95% confidence interval for $\beta_1$.  Interpret this interval in the context of the problem.  
+```{r}
+# Write your code below this line
+```
+
+-- b. Perform a hypothesis test for a linear relationship between ad revenue and circulation.  Be sure to properly state your hypotheses, your test statistic, p-value, and a decision and conclusion at $\alpha = 0.05$.
+```{r}
+# Write your code below this line
+```
+
+-- c. Calculate a 95% confidence interval for the predicted ad revenue when there are 2.5 million subscriptions in circulation.  Interpret this interval in the context of the problem.
+```{r}
+# Write your code below this line
+```
+
+-- d. Calculate a 95% prediction interval for a randomly selected magazine with 2.5 million subscriptions in circulation.  Interpret this interval in the context of the problem.
+```{r}
+# Write your code below this line
+```
