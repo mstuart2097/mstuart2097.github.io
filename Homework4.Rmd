@@ -8,7 +8,7 @@ knitr::opts_chunk$set(echo = TRUE, include = TRUE,
 fig.align="center",warnings = FALSE,fig.width = 5,fig.height=3)
 ```
 
-For the problems in which calculations are needed, please include your \texttt{R} code with your answers, otherwise you will not be given full credit.  Please upload your assignment by Thursday, September 22, 11:59 pm in a pdf file to Sakai.
+For the problems in which calculations are needed, please include your \texttt{R} code with your answers, otherwise you will not be given full credit.  Please upload your assignment by Thursday, September 29, 11:59 pm in a pdf file to Sakai.
 
 - 1. Suppose we perform a simple linear regression where $$n=50, \bar{x} = -0.208, \bar{y} = 1.516, s_x = 2.354, s_y = 3.185$$ $$\hat{\beta}_0 = 1.745, \hat{\beta}_1 = 1.102, s_{Y|X} = 1.868,s_{\hat{\beta}_0} = 0.265, s_{\hat{\beta}_1} = 0.113$$
 
