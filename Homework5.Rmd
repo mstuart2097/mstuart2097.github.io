@@ -1,0 +1,72 @@
+---
+title: "STAT 308 -- Homework 5"
+output: pdf_document
+---
+
+```{r setup, include=FALSE}
+knitr::opts_chunk$set(echo = TRUE, include = TRUE,
+fig.align="center",warnings = FALSE,fig.width = 5,fig.height=3)
+```
+
+For the problems in which calculations are needed, please include your \texttt{R} code with your answers, otherwise you will not be given full credit.  Please upload your assignment by Thursday, October 20, 11:59 pm in a pdf file to Sakai.
+
+- 1. Consider the r dataset \texttt{X.rds}, which contains a $60\times4$ matrix of predictors and \texttt{y.rds} which contains a $60 \times 1$ vector of observed responses.
+
+To load an .RDS file into \texttt{R}, use the function \texttt{readRDS} instead of \texttt{read.csv}
+
+a. State the least squares regression line in the form $\hat{y} = \hat{\beta}_0 + \hat{\beta}_1x_1 + \hat{\beta}_2x_2 + \hat{\beta}_3x_3$
+```{r}
+```
+
+b.  What is the sum of squared errors of the least squares regression line?
+```{r}
+```
+
+c.  What is the estimated regression variance?
+```{r}
+```
+
+d.  What is the estimate of the standard error for $\beta_1$?
+```{r}
+```
+
+2.  Consider the dataset \texttt{economy.csv} which contains the following variables:
+
+- \texttt{CRUDE}: dollars per barrel of crude oil
+- \texttt{INTEREST}: interest on ten-year treasury notes
+- \texttt{FOREIGN}: foreign investments in billions of dollars
+- \texttt{DJIA}: Dow Jones industrial average
+- \texttt{GNP}: Gross national product in billions of dollars
+- \texttt{PURCHASE}: Purchasing power of U.S. dollar (in 1983 dollars)
+- \texttt{CONSUMER}: Consumer debt in billions of dollars
+
+Suppose we wish to create a linear model for crude oil price based on the other six variables in the dataset.
+
+a.  State the least squares regression line for this linear model.
+```{r}
+```
+
+b. Interpret the parameter associated with the variable \texttt{FOREIGN} in the context of the problem.
+```{r}
+```
+
+c. Interpret the parameter associated with the variable \texttt{DJIA} in the context of the problem.
+```{r}
+```
+
+d.  What are the error degrees of freedom for this linear model?
+```{r}
+```
+
+e. What is the estimate of the regression variance?
+```{r}
+```
+
+f. What are the sum of squared errors?
+```{r}
+```
+
+g. State the value of $r^2$ and interpret this value in the context of the problem.
+```{r}
+```
+
