@@ -1,0 +1,66 @@
+---
+title: "STAT 308 -- Homework 6"
+output: pdf_document
+---
+
+```{r setup, include=FALSE}
+knitr::opts_chunk$set(echo = TRUE, include = TRUE,
+fig.align="center",warnings = FALSE,fig.width = 5,fig.height=3)
+```
+
+For the problems in which calculations are needed, please include your \texttt{R} code with your answers, otherwise you will not be given full credit.  Please upload your assignment by Thursday, October 20, 11:59 pm in a pdf file to Sakai.
+
+1. Use the below ANOVA table from a multiple linear regression with three explanatory variables to answer the following questions.
+
+\begin{table}[h!]
+\centering
+\begin{tabular}{l|l|l|l|l|l}
+& df & Sums of Squares & Mean Square & f Value & Pr(>f) \\
+\hline
+$X_1$ & $1$ & 2560.45 & 2560.45 & 1852.713 & <2.2e-16 \\
+$X_2|X_1$ & $1$ & 173.18 & 173.18 & 125.311 & <2.2e-16 \\
+$X_3|X_1,X_2$& $1$ & 0.50 & 0.5 & 0.362 & 0.550 \\
+Error & 56 & 77.40 & 1.382 & & \\
+\hline
+Total & 59 & 2811.53 & 47.653 & & 
+\end{tabular}
+\end{table}
+
+a. What are the model sums of squares for the linear model with $X_1$, $X_2$, and $X_3$ included as covariates/predictors?
+
+b. What are the model sums of squares for the linear model with only $X_1$ and $X_2$ included as covariates?
+
+c. What are the error sums of squares for the linear model with only $X_1$ included as a covariate?
+
+d. What is the mean squared error for the linear model with only $X_1$ included as a covariate?
+
+2. Reconsider the \texttt{economy.csv} dataset from the last homework assignment.
+
+a. Suppose we create a linear model with crude oil in dollars per barrel as the response variable and all of the other variables in the dataset as the explanatory variables.  Perform an overall F test (hypothesis test) to determine if this overall linear model is statistically significant.  Be sure to include all necessary information to perform a hypothesis test.  Assume $\alpha = 0.05$.
+
+```{r}
+```
+
+b. Check if the assumptions of homoscedasticity and normally distributed residuals are violated for the model in (a).
+
+```{r}
+```
+
+c.  Suppose we know that dollars per barrel is related linearly with interest rates.
+
+(i).  Report and interpret the $r^2$ value for the linear model for dollars per barrel with interest rate as the only explanatory variable.
+```{r}
+```
+
+(ii). Perform a hypothesis test to determine if adding purchasing power of the U.S. dollar to our linear model significantly improves the predictive ability of our model.  Be sure to include all necessary information to perform a hypothesis test.  Assume $\alpha = 0.05$.
+```{r}
+```
+
+(iii). What is the additional percent variation in crude oil dollars per barrel than can be explained by adding purchasing power of U.S. dollar to our model to our linear model that already includes interest rates (Hint: this is the difference in the $r^2$s of the two models). 
+```{r}
+```
+
+(iv). Perform a hypothesis test to determine if adding both purchasing power of the U.S. dollar and Dow Jones Industrial Average to our linear model that already includes interest rates significantly improves the predictive ability of our model.  Be sure to include all necessary information to perform a hypothesis test.  Assume $\alpha = 0.05$.
+```{r}
+```
+
