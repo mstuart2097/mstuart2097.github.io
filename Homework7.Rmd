@@ -10,7 +10,7 @@ fig.align="center",warnings = FALSE,fig.width = 5,fig.height=3)
 
 For the problems in which calculations are needed, please include your \texttt{R} code with your answers, otherwise you will not be given full credit.  Please upload your assignment by Thursday, November 3, 11:59 pm in a pdf file to Sakai.
 
-1. For each of the following studies/experiments, determine what the numerator and denominator for performing an F test for differences in the group means will be.  In other words, what are the degrees of freedom for the model and for the error?
+1. For each of the following studies/experiments, determine what the numerator and denominator degrees of freedom for performing an F test for differences in the group means will be.  In other words, what are the degrees of freedom for the model and for the error?
 
 (a).  We wish to determine if the average GPA of Loyola students is different between the four different grades (freshman, sophomore, junior, senior).  We sample a total of 50 students in each grade, record their GPA, and perform an F test for differences in the mean GPA between the grades.
 
