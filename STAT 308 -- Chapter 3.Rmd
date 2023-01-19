@@ -1,7 +1,3 @@
----
-output:
-  html_document: default
----
 ```{r setup, include = FALSE}
 # This line of code tells the document all the display defaults
 
