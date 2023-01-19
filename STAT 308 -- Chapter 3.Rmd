@@ -1,62 +1,34 @@
 ---
-title: "STAT 308 -- Chapter 3"
-output: 
-  pdf_document
-header-includes:
-  - \usepackage{graphicx}
-  - \usepackage{float}
-  - \usepackage{subfigure}
-  - \usepackage{amsmath}
-  - \usepackage{latexsym}
-  - \usepackage{amssymb}
-  - \usepackage{framed}
-  - \usepackage{enumitem}
-  - \usepackage{mathtools}
+output:
+  html_document: default
 ---
-
 ```{r setup, include = FALSE}
 # This line of code tells the document all the display defaults
 
 knitr::opts_chunk$set(echo = TRUE, cache = TRUE, include = TRUE, fig.align="center", fig.width = 3, fig.height = 3)
 ```
 
-# Background Information
-
 ## Important Definitions
 
-\begin{framed}
-\textbf{Statistics:} the science and art of collecting, analyzing, and drawing conclusions from data.
-\end{framed}
+- **Statistics**: the science and art of collecting, analyzing, and drawing conclusions from data.
 
-\begin{framed}
-\textbf{Population of Interest:} Group of individuals we wish to know more information about
-\end{framed}
+- **Population of Interest**: Group of individuals we wish to know more information about
 
-\begin{framed}
-\textbf{Sample:} Subset of the population of interest from which we can obtain information
-\end{framed}
+- **Sample**: Subset of the population of interest from which we can obtain information
 
-\begin{framed}
-\textbf{Individuals:} the subjects/objects of the population of interest; can be people, but also business firms, common stocks, or any other object we want to study.
-\end{framed}
+- **Individuals**: the subjects/objects of the population of interest; can be people, but also business firms, common stocks, or any other object we want to study.
 
-\begin{framed}
-\textbf{Variable:} any characteristic of an individual that we can measure and observe.
-\end{framed}
+- **Variable**: any characteristic of an individual that we can measure and observe.
 
 ## Uploading a dataset to R
 
-```{r, include = FALSE}
+```{r, include = TRUE}
 # This is a very common R package that easily creates tidy data easier for
 # analysis and make beautiful graphs!
 library(tidyverse)
 
-# This tells R to find all files in the below folder
-setwd("C:/Users/mstuart1/OneDrive - Loyola University Chicago/Classes/Fall 2022/STAT 308/Chapter 3")
-# Slashes must be either \\ or / for R to read it
-
 # This tells R to upload a text file as a data frame
-airfares <- read.table("../Data/airfares.txt",header=TRUE)
+airfares <- read.csv("../Data/airfares.csv")
 
 # This tells R to define an object as a variable from the data frame
 dist <- airfares$Distance
@@ -66,25 +38,20 @@ dist <- airfares$Distance
 
 ## Parameters and Statistics
 
-\begin{framed}
-  \textbf{Population Parameter:} A numeric value that describes the characteristics of an entire population
-\end{framed}
-\begin{framed}
-  \textbf{Sample Statistic:} A numeric value that describes the characteristics of the observed data from a sample
-\end{framed}
+- **Population Parameter**: A numeric value that describes the characteristics of an entire population
 
-Recall, we use \textbf{sample statistics} to make inference about \textbf{population parameters}.
+- **Sample Statistic**: A numeric value that describes the characteristics of the observed data from a sample
+
+Recall, we use **sample statistics** to make inference about **population parameters**.
 
 Some important sample statistics:
-\begin{framed}
-\textbf{Sample Mean:} $\bar{x} = \frac{1}{n}\sum_{i=1}^n x_i$ \\
-\textbf{Sample Variance:} $s_x^2 = \frac{1}{n - 1}\sum_{i=1}^n (x_i - \bar{x})^2$
-\textbf{Sample Standard Deviation:} $s_x = \sqrt{s_x^2}$
 
-\end{framed}
+- **Sample Mean**: $\bar{x} = \frac{1}{n}\sum_{i=1}^n x_i$
+- **Sample Variance**: $s_x^2 = \frac{1}{n - 1}\sum_{i=1}^n (x_i - \bar{x})^2$
+- **Sample Standard Deviation**: $s_x = \sqrt{s_x^2}$
 
 ## Summary Statistics in R
-```{r, include = FALSE}
+```{r, include = TRUE}
 
 mean(dist)
 median(dist)
@@ -94,10 +61,8 @@ summary(dist)
 
 ```
 
-\vspace{6cm}
-
 ## Summary Graphs in R
-```{r, include = FALSE}
+```{r, include = TRUE}
 # Create a histogram in R
 hist(dist)
 
@@ -112,11 +77,9 @@ boxplot(dist)
 
 # Random Variables and Distributions
 
-\begin{framed}
-\textbf{Random Variable:} denote a variable whose observed values may be considered outcomes of a stochastic or random experiment.  Random variables are typically denoted by a capital letter $X$, $Y$, etc., while observations are typically denoted by lowercase letters $x$, $y$, etc.
-\end{framed}
+- **Random Variable** denote a variable whose observed values may be considered outcomes of a stochastic or random experiment.  Random variables are typically denoted by a capital letter $X$, $Y$, etc., while observations are typically denoted by lowercase letters $x$, $y$, etc.
 
-Recall, a data frame contains \textbf{observations} from multiple \textbf{random variables} from a particular \textbf{sample} from the \textbf{population of interest}.
+Recall, a data frame contains **observations** from multiple **random variables** from a particular **sample** from the **population of interest**.
 
 ## Normal Distribution
 
@@ -128,17 +91,19 @@ Suppose $X \sim \mathcal{N}(2,4)$.
 
 ### a 
 What is $Pr(X > 3.5)$?
-\vspace{2cm}
+```{r, include = TRUE}
+```
 
 ### b
 What is the $0.35$ quantile/$35^{th}$ percentile of $X$?
-\vspace{2cm}
+```{r, include = TRUE}
+```
 
 ## Central Limit Theorem
 
 Define $\bar{X}$ as the random variable associated with the mean of a sample $\bar{x}$.
 
-If a random variable $X$ is normally distributed with mean $\mu_x$ and standard deviation $\sigma_x$ OR the sample size $n_x$ is sufficiently large ($n_x > 30$), then the \textbf{sampling distribution of the sample mean}, $$\bar{X} \approx \mathcal{N}\left(\mu_x,\frac{\sigma_x^2}{n_x}\right)$$ or, in other words, $$\frac{\bar{X} - \mu_x}{\frac{\sigma_x}{\sqrt{n_x}}} \approx \mathcal{N}(0,1)$$.  This is an important theorem used in estimation and inference, and will be used throughout the semester.
+If a random variable $X$ is normally distributed with mean $\mu_x$ and standard deviation $\sigma_x$ OR the sample size $n_x$ is sufficiently large ($n_x > 30$), then the **sampling distribution of the sample mean**, $$\bar{X} \approx \mathcal{N}\left(\mu_x,\frac{\sigma_x^2}{n_x}\right)$$ or, in other words, $$\frac{\bar{X} - \mu_x}{\frac{\sigma_x}{\sqrt{n_x}}} \approx \mathcal{N}(0,1).$$  This is an important theorem used in estimation and inference, and will be used throughout the semester.
 
 ## Chi-squared $\chi^2$ Distribution
 
@@ -153,21 +118,9 @@ ggplot(data = data.frame(x = c(0, 20)), aes(x)) +
   theme(legend.position = "none")
 ```
 
-### Example
-
-Suppose $X \sim {\chi^2}_{df=10}$.  
-
-### a 
-What is $Pr(X < 5)$?
-\vspace{2cm}
-
-### b
-Find $x$ such that $Pr(X > x) = 0.6$.
-\vspace{2cm}
-
 ## $t$ Distribution
 
-Often times, the population standard deviation $\sigma_x$ is unknown in the purposes of the sampling distribution.  If this is the case, then we can substitute the sample standard deviation $s_x$ for the population standard deviation, $\sigma_x$.  And, in that case, $$\frac{\bar{X} - \mu_x}{\frac{s_x}{\sqrt{n_x}}} \sim t_{df = n_x-1}$$.
+Often times, the population standard deviation $\sigma_x$ is unknown in the purposes of the sampling distribution.  If this is the case, then we can substitute the sample standard deviation $s_x$ for the population standard deviation, $\sigma_x$.  And, in that case, $$\frac{\bar{X} - \mu_x}{\frac{s_x}{\sqrt{n_x}}} \sim t_{df = n_x-1}.$$
 
 Like the normal distribution, the $t$ distribution is also symmetric and unimodal, but has fatter tails to account for the fact that we are using an estimate $s_x$ instead of $\sigma_x$.
 
@@ -187,15 +140,17 @@ Suppose $X \sim t_{df=10}$.
 
 ### a 
 What is $Pr(X < 2.2)$?
-\vspace{2cm}
+```{r, include = TRUE}
+```
 
 ### b
 What is the $0.8$ quantile/$80^{th}$ percentile of $X$?
-\vspace{2cm}
+```{r, include = TRUE}
+```
 
 ## $F$ Distribution
 
-Suppose now we have a new set of data from a random variable $Y$ with population mean $\mu_y$ and population variance $\sigma_y^2$.  Suppose the observed data has a sample mean $\bar{y}$ and sample variance $s_y^2$.  The $F$ distribution is an appropriate distribution for the ratio of the variances of the two random variables.  More specifically, $$\frac{S_x^2/\sigma_x^2}{S_y^2/\sigma_y^2} \sim F_{df1 = n_x - 1,df2 = n_y - 1}$$ where $df1$ is denoted as the \textbf{numerator degrees of freedom} and $df2$ is denoted as the \textbf{denominator degrees of freedom}.
+Suppose now we have a new set of data from a random variable $Y$ with population mean $\mu_y$ and population variance $\sigma_y^2$.  Suppose the observed data has a sample mean $\bar{y}$ and sample variance $s_y^2$.  The $F$ distribution is an appropriate distribution for the ratio of the variances of the two random variables.  More specifically, $$\frac{S_x^2/\sigma_x^2}{S_y^2/\sigma_y^2} \sim F_{df1 = n_x - 1,df2 = n_y - 1}$$ where $df1$ is denoted as the **numerator degrees of freedom** and $df2$ is denoted as the **denominator degrees of freedom**.
 
 Like the $\chi^2$ distribution, the $F$ distribution is skewed to the right.
 
@@ -215,47 +170,50 @@ Suppose $X \sim F_{df1=6,df2=21}$.
 
 ### a 
 What is $Pr(X < 1.3)$?
-\vspace{2cm}
+```{r, include = TRUE}
+```
 
 ### b
 Find $x$ such that $Pr(X > x) = 0.4$.
-\vspace{2cm}
+```{r, include = TRUE}
+```
 
-The $F$ distribution is related to the $t$ distribution because if a random variable $T \sim t_{df=\nu}$, then
+The $F$ distribution is related to the $t$ distribution because if a random variable $T \sim t_{df=\nu}$, then $F \sim F(df1=1,df2=\nu)$
 
 ## Notes for distribution calculations in R
+
+- Starts with p: We are inputting a *quantile* to output a *probability*
+- Starts with q: We are inputting a *probability* to output a *quantile*
+
+- norm: We are using a *Normal* distribution with mean $\mu$ and standard deviation $\sigma$
+- t: We are using a *t* distribution with degrees of freedom $df$
+- F: We are using an *F* distribution with numerator degrees of freedom $df1$ and denominator degrees of freedom $df2$
 
 # Statistical Inference
 
 ## Estimation
 
-\begin{framed}
-  \textbf{Estimation:} The category of statistical inference concerned with quantifying the specific value of a population parameter.
-\end{framed}
+- **Estimation**: The category of statistical inference concerned with quantifying the specific value of a population parameter.
 
 For example, if we have a random sample of data $x_1,x_2,\dots,x_n$ from a population, we can obtain an estimate of the population mean, $\mu$, by the sample mean $\bar{x}$.
 
 Can we say that $\bar{x}$ equivalent to $\mu$?
 
-\textbf{NO}, different samples produce different sample means.
+**NO**, different samples produce different sample means.
 
 We need to find a way to quantify the uncertainty of our estimate of the population mean (or other population parameter).
 
-\begin{framed}
-  \textbf{Confidence Interval:} A pair of values that provides a range of \textit{plausible} values for the population parameter for a given level of confidence $C = 100 \times (1 - \alpha)$.
-\end{framed}
+- **Confidence Interval**: A pair of values that provides a range of *plausible* values for the population parameter for a given level of confidence $C = 100 \times (1 - \alpha)$.
 
 ### Assumptions needed to calculate a confidence interval
-\begin{itemize}
-  \item Data comes from a random sample from the population of interest
-\end{itemize}
+- Data comes from a random sample from the population of interest.
 
 Confidence intervals take the following general form: $$(\text{Parameter Estimate}) \pm (\text{Critical Value from }t\text{-distribution}) \times (\text{Estimate of Std. Error of Estimate}).$$
 
 A $C\%$ confidence interval for a population mean, $\mu$ is written as $$\bar{x} \pm t_{n-1,1-\frac{\alpha}{2}} \times s_x,$$ where $t_{n-1,1-\frac{\alpha}{2}}$ is the $1-\frac{\alpha}{2}$ quantile of the $t$-distribution with $n-1$ degrees of freedom.
 
 ### Example
-Recall the airfares dataset we previously uploaded into our \texttt{R} session.  Assume that the data comes from the population of interest, which in this case is all domestic flights out of O'Hare International Airport.  Calculate a 95\% confidence interval for the mean flight distance.
+Recall the airfares dataset we previously uploaded into our R session.  Assume that the data comes from the population of interest, which in this case is all domestic flights out of O'Hare International Airport.  Calculate a 95\% confidence interval for the mean flight distance.
 
 \vspace{6cm}
 
@@ -264,33 +222,25 @@ Recall the airfares dataset we previously uploaded into our \texttt{R} session. 
 
 ### Interpreting a confidence interval
 
-We are $\boldsymbol{C\%}$ confident that the \textbf{true population parameter in the context of the given problem} is between \textbf{lower bound with units } and \textbf{upper bound with units}.
+We are $\boldsymbol{C\%}$ confident that the **true population parameter in the context of the given problem** is between **lower bound with units** and **upper bound with units**.
 
 Go back to the previous example.  Interpret the 95\% CI in the context of the problem.
-
-\vspace{2cm}
 
 
 ## Hypothesis testing
 
-\begin{framed}
-  \textbf{Hypothesis Testing:} The category of statistical inference concerned with testing whether our estimated value for the population parameter is different enough from the hypothesized value
-\end{framed}
+- **Hypothesis Testing**: The category of statistical inference concerned with testing whether our estimated value for the population parameter is different enough from the hypothesized value
 
 ### Procedure for performing a hypothesis test
 
-\begin{enumerate}
-  \item Check that the assumptions needed to perform a hypothesis test are met.
-  \begin{itemize}
-    \item Data comes from a random sample from the population of interest.
-  \end{itemize}
-  \item Specifically state the null hypothesis, $H_0$, and the alternative hypothesis, $H_a$.
-  \item Specify the level of significance, $\alpha$.
-  \item Calculate the test statistic.
-  \item Calculate the appropriate p-value for the hypothesis test.
-  \item Form a decision to either reject $H_0$ or fail to reject $H_0$.
-  \item State your conclusion.
-\end{enumerate}
+1. Check that the assumptions needed to perform a hypothesis test are met.
+  - Data comes from a random sample from the population of interest.
+2. Specifically state the null hypothesis, $H_0$, and the alternative hypothesis, $H_a$.
+3. Specify the level of significance, $\alpha$.
+4. Calculate the test statistic.
+5. Calculate the appropriate p-value for the hypothesis test.
+6. Form a decision to either reject $H_0$ or fail to reject $H_0$.
+7. State your conclusion.
 
 ### Example
 In the airfares dataset, suppose it is believed that the average distance for domestic flights from O'Hare is 1000 miles.  Perform a hypothesis test for this belief with $\alpha = 0.05$.
@@ -300,9 +250,7 @@ In the airfares dataset, suppose it is believed that the average distance for do
 
 ## Connection between confidence intervals and hypothesis testing.
 
-\begin{framed}
-  \textbf{CI and HT connection:} If a confidence interval and hypothesis test are calculated on the \textbf{same observed dataset} where $H_a: \mu \neq \mu_0$ and the same $\alpha$ is used in both calculations, then $$\mu_0 \text{ is not inside the C\% CI} \Leftrightarrow H_0 \text{ is rejected}$$ and $$\mu_0 \text{ is inside the C\% CI} \Leftrightarrow H_0 \text{ is not rejected}.$$
-\end{framed}
+**CI and HT connection**: If a confidence interval and hypothesis test are calculated on the \textbf{same observed dataset} where $H_a: \mu \neq \mu_0$ and the same $\alpha$ is used in both calculations, then $$\mu_0 \text{ is not inside the C% CI} \Leftrightarrow H_0 \text{ is rejected}$$ and $$\mu_0 \text{ is inside the C% CI} \Leftrightarrow H_0 \text{ is not rejected}.$$
 
 ### Example
 
