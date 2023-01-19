@@ -1,9 +1,3 @@
----
-title: "STAT 308 -- Homework 1"
-author: Your Name
-output: pdf_document
----
-
 ```{r setup, include=FALSE}
 knitr::opts_chunk$set(echo = FALSE)
 ```
