@@ -2,7 +2,7 @@
 knitr::opts_chunk$set(echo = FALSE)
 ```
 
-For the problems in which calculations are needed, please include your \texttt{R} code with your answers, otherwise you will not be given full credit.  Please upload your assignment by Thursday, September 8, 11:59 pm in a pdf file to Sakai.
+For the problems in which calculations are needed, please include your \texttt{R} code with your answers, otherwise you will not be given full credit.  Please upload your assignment by Friday, January 27, 11:59 pm in either a HTML, pdf, or Word document to Sakai.
 
 - 1.
 Assume that $Z$ is a random variable from the standard normal (i.e. $\mu = 0$, $\sigma = 1$).
