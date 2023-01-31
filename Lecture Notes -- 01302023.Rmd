@@ -1,0 +1,464 @@
+
+```{r setup, include = FALSE}
+# This line of code tells the document all the display defaults
+
+knitr::opts_chunk$set(echo = TRUE, cache = TRUE, include = TRUE, fig.align="center",warnings = FALSE,fig.width = 8,fig.height=5)
+```
+
+# Background Information
+
+Suppose we have $n$ observations from two random variables $X$ and $Y$ (i.e. we have pairs of data $(x_1,y_1), (x_2,y_2),\dots,(x_n,y_n)$).  We believe that we can quantify the variation of the \textbf{dependent variable} $Y$ by our knowledge of the \textbf{independent variable} $X$.
+
+## Important Definitions
+
+- **Scatter Diagram (Plot)**: A plot of the observations from the independent variable $(x_1,\dots,x_n)$ against the observations from the dependent variable $(y_1,\dots,y_n)$.
+
+### Example
+Consider the blood pressure dataset, where we are interested quantifying the variation of systolic blood pressure based on the subjects' age.
+
+Draw a scatterplot of systolic blood pressure against age.
+
+```{r}
+library(tidyverse)
+
+bloodpressure <- read.csv("../Data/bloodpressure.csv")
+
+# plot(x=bloodpressure$Age,y=bloodpressure$SBP)
+
+plot(SBP ~ Age,data=bloodpressure)
+```
+
+What can you determine from the scatterplot?
+
+- Plot looks positive and linear
+
+- Data only ranges from ages 18 to 72
+
+- One large outlier at around (46,220)
+
+Now that we have analyzed the scatterplot, we need to answer the following questions:
+
+-  What is the appropriate mathematical model to use -- straight line, logarithmic function, exponential function, etc.?
+
+- Given a specific model form, what criteria do we use and how do we obtain the best fitting line to the data?
+
+We will start by answering these questions for a **straight line dataset with one explanatory (independent) variable**.  We will then use this to expand into both linear and non-linear models with more than one potential explanatory variable.
+
+# Straight Line Model
+
+Mathematically, a straight line is defined as $$y = \beta_0 + \beta_1 x$$ where 
+
+- $\beta_0$ is the intercept -- the value of $y$ when $x = 0$
+
+- $\beta_1$ is the slope -- the change in $y$ for a one unit change in $x$
+
+Let's say that we are tentatively assuming a straight line model for our given dataset.
+
+## Assumptions Needed for Simple Linear Regression
+
+- Existence: For any given value of $X$, $Y$ is a random variable with a certain probability distribution with a finite mean and variance.
+  Define:
+  - $\mu_{Y|X}$ - the population mean of $Y$ for a fixed $X$
+  - $\sigma_{Y|X}^2$ - the population variance of $Y$ for a fixed $X$
+  
+```{r, echo=FALSE}
+  # ggplot(data = data.frame(x = c(-4, 4)), aes(x)) +
+  # stat_function(fun = dnorm, n = 101, args = list(mean = exp(0.7*2)-1, sd = 1),colour="blue") +
+  # geom_vline(xintercept=exp(0.7*2)-1,colour="blue",linetype=2)+
+  # stat_function(fun = dsnorm, n = 101, args = list(mean = exp(0.7*1)-1,sd=0.75,xi=1/2),colour="red") +
+  # geom_vline(xintercept=exp(0.7*1)-1,colour="red",linetype=2)+
+  # stat_function(fun = dsnorm, n = 101, args = list(mean = exp(0.7*-1)-1,sd=0.6,xi=1.5),colour="green") +
+  # geom_vline(xintercept=exp(0.7*-1)-1,colour="green",linetype=2)+
+  # stat_function(fun = dnorm,n=101,args = list(mean=exp(0.7*0)-1,sd=1.4))+
+  # geom_vline(xintercept=exp(0.7*0)-1,colour="black",linetype=2)+
+  # ylab("") + 
+  # scale_y_continuous(breaks = NULL)
+```
+  
+- Independence: The observed values of $Y$ are statistically independent of one another given $X$
+  Counterexample:
+    - X = Daily closing price of the S\&P 500
+    - Y = Daily closing price of Bitcoin
+  
+- Linearity: $\mu_{Y|X}$ is a straight line function of $X$.  In other words we say that $$\mu_{Y|X} = \beta_0 + \beta_1 X$$ where $\beta_0$ and $\beta_1$ are defined here as the population intercept and slope, respectively.
+
+We have now defined a structure for the mean of $Y$ given $X$.
+
+```{r, echo=FALSE}
+  # ggplot(data = data.frame(x = c(-4, 4)), aes(x)) +
+  # stat_function(fun = dnorm, n = 101, args = list(mean = 2, sd = 1),colour="blue") +
+  # geom_vline(xintercept=2,colour="blue",linetype=2)+
+  # stat_function(fun = dsnorm, n = 101, args = list(mean = 1,sd=0.75,xi=1/2),colour="red") +
+  # geom_vline(xintercept=1,colour="red",linetype=2)+
+  # stat_function(fun = dsnorm, n = 101, args = list(mean = -1,sd=0.6,xi=1.5),colour="green") +
+  # geom_vline(xintercept=-1,colour="green",linetype=2)+
+  # stat_function(fun = dnorm,n=101,args = list(mean=0,sd=1.4))+
+  # geom_vline(xintercept=0,colour="black",linetype=2)+
+  # ylab("") + 
+  # scale_y_continuous(breaks = NULL)
+```
+  
+  However, there is still some difference between the random variable $Y$ and its mean $\mu_{Y|X}$ that we have yet to account for.  Therefore, the complete linear model is now typically expressed as complete statistical linear model $$Y = \beta_0 + \beta_1 X + \epsilon,$$ where $\epsilon$ is a random variable with zero mean $\mu_{\epsilon|X} = 0$.
+  
+  $\epsilon$ is commonly referred to as the **errors/residuals** of the linear model.
+  
+  The next two assumptions discuss the distribution of $\epsilon$.
+  
+- Homoscedasticity: The variance of $Y$ is the same for different given values of $X$.  Mathematically, this is equivalent to saying $$\sigma_{Y|X}^2  = \sigma^2,$$ or in other words $\sigma_{Y|X_i}^2 = \sigma_{Y|X_j}^2$ for different $i$ and $j$.
+```{r, echo=FALSE}
+  # ggplot(data = data.frame(x = c(-4, 4)), aes(x)) +
+  # stat_function(fun = dnorm, n = 101, args = list(mean = 2, sd = 1),colour="blue") +
+  # geom_vline(xintercept=2,colour="blue",linetype=2)+
+  # stat_function(fun = dsnorm, n = 101, args = list(mean = 1,sd=1,xi=1/2),colour="red") +
+  # geom_vline(xintercept=1,colour="red",linetype=2)+
+  # stat_function(fun = dsnorm, n = 101, args = list(mean = -1,sd=1,xi=1.5),colour="green") +
+  # geom_vline(xintercept=-1,colour="green",linetype=2)+
+  # stat_function(fun = dnorm,n=101,args = list(mean=0,sd=1))+
+  # geom_vline(xintercept=0,colour="black",linetype=2)+
+  # ylab("") + 
+  # scale_y_continuous(breaks = NULL)
+```
+  
+- Normality: For any fixed value of $X$, $Y$ is normally distributed.  This fact makes analysis of the data easier.  
+
+```{r, echo=FALSE}
+  # ggplot(data = data.frame(x = c(-4, 4)), aes(x)) +
+  # stat_function(fun = dnorm, n = 101, args = list(mean = 2, sd = 1),colour="blue") +
+  # geom_vline(xintercept=2,colour="blue",linetype=2)+
+  # stat_function(fun = dsnorm, n = 101, args = list(mean = 1,sd=1,xi=1),colour="red") +
+  # geom_vline(xintercept=1,colour="red",linetype=2)+
+  # stat_function(fun = dsnorm, n = 101, args = list(mean = -1,sd=1,xi=1),colour="green") +
+  # geom_vline(xintercept=-1,colour="green",linetype=2)+
+  # stat_function(fun = dnorm,n=101,args = list(mean=0,sd=1))+
+  # geom_vline(xintercept=0,colour="black",linetype=2)+
+  # ylab("") + 
+  # scale_y_continuous(breaks = NULL)
+```
+
+All of these assumptions put together lead us to our full mathematical model we will assume: $$Y \sim \mathcal{N}(\beta_0 + \beta_1 X,\sigma^2).$$
+
+## "Least Squares" Regression Model
+
+Define $\hat{\beta}_0$ and $\hat{\beta}_1$ as the linear regression estimates of $\beta_0$ and $\beta_1$, respectively.  How can we choose the "best" estimates of these population parameters?
+
+The most obvious is to choose $\hat{\beta}_0$ and $\hat{\beta}_1$ such that the average error is zero.  That is $$\sum_{i=1}^n (y_i - (\hat{\beta}_0 + \hat{\beta}_1x_i)) = 0.$$
+
+What is the main issue with this method?
+
+- There are infinitely many ways to choose $\hat{\beta}_0$ and $\hat{\beta}_1$.
+
+Return to the blood pressure dataset
+
+```{r}
+# Mean of explanatory variable (age)
+barx <- mean(bloodpressure$Age)
+# Mean of response variable (SBP)
+bary <- mean(bloodpressure$SBP)
+plot(SBP ~ Age,bloodpressure) #Scatterplot of systolic blood pressure vs. age
+abline(a=bary + 3*barx,b=-3) # puts a straight line on a previously drawn plot
+# a = intercept, b = slope
+```
+
+- The line in the scatterplot has average error equal to 0, but the line is not a good fit for the data.
+
+The "least squares" method provides estimates that minimizes the sum of the squared differences between observed $y$ and its estimates from the regression line.  In other words, the least squares methods finds $\hat{\beta}_0$ and $\hat{\beta}_1$ that minimizes the sum of squared errors $$SSE = \sum_{i = 1}^n (y_i - \hat{y}_i)^2 = \sum_{i = 1}^n (y_i - (\hat{\beta}_0 + \hat{\beta}_1 x_i))^2,$$ where $\hat{y}_i = \hat{\beta}_0 + \hat{\beta}_1 x_i$.
+
+```{r}
+```
+
+The least squares method produces the estimates $$\hat{\beta}_1 = \frac{\sum_{i=1}^n(x_i - \bar{x})(y_i - \bar{y})}{\sum_{i=1}^n(x_i - \bar{x})^2}$$ and $$\hat{\beta}_0 = \bar{y} - \hat{\beta}_1\bar{x}.$$
+
+### Example:
+
+Suppose I obtain data with the following information: $$n = 20, \\ \sum x_i = 40, \\ \sum y_i = 230, \\ \sum x_i^2 = 100, \\ \sum y_i^2 = 2500, \\ \sum x_iy_i = 500.$$  Find $\hat{\beta}_0$ and $\hat{\beta}_1$.
+
+```{r}
+n <- 20
+sum_x <- 40
+sum_y <- 230
+sum_x2 <- 100
+sum_y2 <- 2500
+sum_xy <- 500
+num <- sum_xy - sum_x*sum_y/n #numerator for beta 1 hat
+den <- sum_x2 - (sum_x)^2/n #denominator for beta 1 hat
+beta1 <- num/den
+beta1
+beta0 <- sum_y/n - beta1 * sum_x/n
+beta0
+```
+```{r}
+SSE <- sum_y2 + n*beta0^2 + beta1^2*sum_x2 - 2*beta0*sum_y - 2*beta1*sum_xy + 2*beta0*beta1*sum_x
+SSE
+MSE <- SSE/(n-2)
+MSE
+```
+
+
+These estimates can be combined to provide an estimate for $Y$ for a given value $X = x$, $$\hat{Y}_{x_0} = \hat{\beta}_0 + \hat{\beta}_1 x_0.$$
+
+### Performing Least Squares regression in R
+
+```{r}
+# lm stands for linear model
+# y ~ x: predicting y given explanatory variable x
+mod <- lm(SBP ~ Age,bloodpressure)
+summary(mod) #summary of everything about the fitted linear model
+```
+Coefficients table in summary(mod)
+
+- First row is information about the intercept
+
+- Second row (and all other rows) is information about the slope ($X$)
+
+- First column are the estimates $\hat{\beta}_0$ and $\hat{\beta}_1$
+
+- Other columns we will look at when conducting hypothesis tests
+
+What is the least squares prediction/regression line for the blood pressure data when using age to predict systolic blood pressure?
+
+$$\hat{Y} = 98.71 + 0.9709 X$$
+
+### Example
+
+According to the least squares regression line, what do we expect a randomly selected 50 year old's systolic blood pressure to be?
+
+```{r}
+98.71 + 0.9709*50
+
+# Using the model
+newdata <- data.frame(Age=50) # Create a new data frame for Age
+# Age must be spelled the same as the bloodpressure data file
+# mod is the linear model we just made
+predict(mod,newdata)
+```
+- We expect a randomly selected 50 year old to have systolic blood pressure of 147.26 mm/Hg.
+
+What do we expect a randomly selected 80 year old's systolic blood pressure to be?
+
+- 80 is outside our observed range of ages, so this prediction is using extrapolation, and is unreliable.
+
+```{r}
+```
+
+## Estimating the variance ($\sigma_{Y|X}^2$)
+
+Recall that, without knowledge of $X$, our estimate of the variance of $Y$ is $$s_Y^2 = \frac{1}{n-1} \sum_{i=1}^n (y_i - \bar{y})^2.$$  The summation can be thought of as the sum of squared distance between an observed $y_i$ and its prediction $\bar{y}$, or in other words, the \textbf{sum of squared errors}.  The estimate for the variance of the linear regression model, $\sigma_{Y|X}^2 = \sigma^2$ is calculated in a similar manner $$s^2 = s_{Y|X}^2 = \frac{1}{n-2} SSE = \frac{1}{n-2}\sum_{i = 1}^n (y_i - (\hat{\beta}_0 + \hat{\beta}_1 x_i))^2.$$
+
+Note that, for $s^2$ we divide the sum of squared errors by $n-2$, whereas for $s_Y^2$ we divide the sum of squared errors by $n-1$.  This is because, in simple linear regression, we have to estimate $\beta_0$ and $\beta_1$.
+
+The regression variance is also often called the \textbf{mean squared error}.
+
+```{r}
+SSE <- deviance(mod) #calculates the sum of squared errors for the linear model
+df <- df.residual(mod) #calculates n - 2 (error degrees of freedom)
+MSE <- SSE/df
+MSE
+```
+- $s^2 = 299.77$
+
+```{r}
+summary(mod)
+MSE <- 17.31^2 #17.31 is the residual standard error from summary(mod)
+MSE
+```
+Regression standard deviation, $s$, is the residual standard error from the model summary.
+
+## Intepretation of the estimates $\hat{\beta}_0$ and $\hat{\beta}_1$
+
+- $\hat{\beta}_1$: When $x$ increases by 1 unit, the change in the predicted/expected value of y is $\hat{\beta}_1$ units.
+
+- $\hat{\beta}_0$: The predicted/expected value of $y$ when $x = 0$.
+
+### Example
+
+What are the interpretations of $\hat{\beta}_0$ and $\hat{\beta}_1$ from the model predicting systolic blood pressure by age?
+
+Recall, the least squares regression line is $$\hat{Y} = 98.71 + 0.9709 X$$
+
+- $\hat{\beta}_0$: When a person is 0 years old, we predict their systolic blood pressure to be 98.71 mm/Hg.  This answer does not make sense because we would not observe a systolic blood pressure for someone who hasn't been born yet.  Also, we do not observe any response when a person is zero year's old, so this is extrapolation.
+
+- $\hat{\beta}_1$: When a person increases in age by 1 year, their predicted systolic blood pressure will increase by 0.9709 mm/Hg.
+
+## Checking the validity of our assumptions
+
+- Existence and Independence: Logic based approaches, does this make sense?
+
+- Linearity: Check the scatter plot
+
+- Homoscedasticity (Common Variance): Residual Plot
+
+\textbf{Residual Plot:} A plot of the residuals from a least squares regression model, plotted against the fitted values $\hat{Y}$.
+
+```{r}
+plot(mod,1) # plot function can also produce multiple plots from a linear model to assess assumptions
+# Plot 1 is a residual plot
+```
+
+Want to see either no pattern at all, or some type of random scatter around a horizontal line at zero.  We also want to see the same type of spread of the residuals across different values of $\hat{y}$.
+
+For the residual plot for our bloodpressure dataset, the residuals appear to be randomly scattered about zero and evenly spaced for all observed ages.  Therefore, the assumption of common variance for our linear model with systolic blood pressure regressed on age is not violated.
+
+- Normality: QQ-Plot
+
+\textbf{Quantile-Quantile (QQ) Plot:} A plot that visualizes the residuals from a model (fitted linear model) against an assumed error distribution (normal distribution for the least squares model).
+
+For our model, we want to check if the residuals are normally distributed.
+
+```{r}
+plot(mod,2) # Plot 2 is a QQ-plot comparing the residuals to a normal distribution
+```
+
+We want to see points that fall closely to a 45-degree line.  Note: pay closest attention to the points on the x-axis between -2 and 2.
+
+For the bloodpressure dataset, the points appear to fall closely to the 45-degree line/reference line, therefore we can say the assumption of normality for our linear model between systolic blood pressure and age is not violated.
+
+## Inference on linear regression model
+
+Recall from Chapter 3, we said that $$\frac{\bar{Y} - \mu}{\frac{s_Y}{\sqrt{n}}} \sim t_{df=n-1}$$ where $\bar{Y}$ is the estimator of $\mu$.  We can obtain a similar conclusion regarding the distribution of $\hat{\beta}_0$ and $\hat{\beta}_1$.  $$\frac{\hat{\beta}_0  - \beta_0}{s_{\hat{\beta}_0}} \sim t_{df = n-2}$$ and$$\frac{\hat{\beta}_1 - \beta_1}{s_{\hat{\beta}_1}} \sim t_{df = n-2}$$ where $s_{\hat{\beta}_0}^2 = s^2\left( \frac{1}{n} + \frac{\bar{x}^2}{(n-1)s_X^2}\right)$ and $s_{\hat{\beta}_1}^2 =  \frac{s^2}{(n-1)s_X^2}$ (Note: Often times, inference on $\beta_0$ is not meaningful to us.).  The degrees of freedom is $n-2$ because we have to estimate two parameters $\beta_0$ and $\beta_1$.
+
+```{r}
+```
+
+### Confidence intervals for $\beta_1$
+
+A $C = 100\times(1-\alpha)$% confidence interval for the population slope, $\beta_1$, is $$\hat{\beta}_1 \pm t_{1-\frac{\alpha}{2},n-2}s_{\hat{\beta}_1}$$ where $t_{1-\frac{\alpha}{2},n-2}$ is the $1 - \frac{\alpha}{2}$ quantile of the $t$-distribution with $n-2$ degrees of freedom.
+
+#### Example
+
+Calculate and interpret a 90% confidence interval for $\beta_1$ for the blood pressure dataset.
+
+```{r}
+summary(mod)
+est <- 0.9709
+se <- 0.2102
+alpha <- 0.1
+n <- nrow(bloodpressure) # nrow counts the number of rows in a data frame or a matrix
+crit <- qt(1-alpha/2,df=n-2)
+est + c(-1,1)*crit*se
+```
+(0.6133,1.328).  We are 90% confident that when a person's age increases by 1 year, their predicted systolic blood pressure increases by between 0.6133 and 1.328 mm/Hg.
+
+```{r}
+confint(mod,level=0.9)
+```
+
+### Hypothesis testing for $\beta_1$
+
+In terms of hypothesis testing, we are considered with testing if a linear model for our response variable with the explanatory variable included is statistically significantly better at predicting than the model that does **not** include the explanatory variable.
+
+In other words we are testing to see if the solid line in the below graph ($\hat{y} = \hat{\beta}_0 + \hat{\beta}_1x$) is significantly better at predicting $Y$ than the horizontal dashed line ($\hat{y} = \bar{y}$).
+
+```{r, echo=FALSE}
+plot(SBP ~ Age,data = bloodpressure)
+abline(lm(mod)) # Plots the least squares regression line from our linear model
+abline(h=mean(bloodpressure$SBP),lty=2) # Plots a horizontal line at the sample mean of systolic blood pressure, lty = 2 tells us to make it a dashed line
+```
+
+We can think of this in terms of a reduced model and a full model:
+
+- Reduced Model: $\mu_{Y|X} = \beta_0$
+- Full Model: $\mu_{Y|X} = \beta_0 + \beta_1 X$
+
+The null hypothesis can be thought of as what is missing from the full model in the reduced model.
+
+$$H_0: \beta_1 = 0$$
+
+The alternative hypothesis is the exact opposite of the null hypothesis, and what we are trying to prove.
+
+$$H_a: \beta_1 \neq 0$$
+
+
+Test Statistic: $$t = \frac{\hat{\beta}_1}{s_{\hat{\beta}_1}}$$.  Distribution of the test statistic under $H_0$ is a $t$-distribution with $n-2$ degrees of freedom.  This is the distribution that we use to calculate the corresponding p-value.
+
+p-values: Note that $T$ represents a $t$-distributed random variable with $n-2$ degrees of freedom.
+
+Decision: 
+
+- If $p-value \leq \alpha$, reject $H_0$.  We have statistically significant evidence that $X$ is significant in predicting $Y$.
+
+- If $p-value > \alpha$, do not reject $H_0$.  We do not have statistically significant evidence that $X$ is significant in predicting $Y$.
+
+#### Example
+
+Conduct a hypothesis test for a significant linear relationship between age and systolic blood pressure.  Assume $\alpha = 0.05$.
+
+Reduced Model: $\hat{SBP} = \beta_0$
+
+Full Model: $\hat{SBP} = \beta_0 + \beta_1Age$
+
+$$H_0:\beta_1 = 0$$
+$$H_a:\beta_1 \neq 0$$
+
+```{r}
+summary(mod)
+```
+$t = 4.618$ and $p = 7.87 \times 10^{-5}$. $p \leq \alpha$, so we reject $H_0$, and we conclude that there is a statistically significant linear relationship between age and systolic blood pressure.
+
+#### Interpretations of hypothesis test
+
+If $H_0: \beta_1 = 0$ is rejected, this does \textbf{NOT} necessarily mean that the underlying relationship between $X$ and $Y$ is linear.  Similarly, if $H_0: \beta_1 = 0$ is not rejected, this does \textbf{NOT} necessarily mean that their is no relationship between $X$ and $Y$. 
+
+Consider the drug concentration dataset where we are interested in modeling the amount of concentration of the drug left in the body after a certain number of hours.  Let's look at a scatterplot of the dataset.
+
+```{r}
+```
+
+Now, let's look at the results of the linear model regressing drug concentration on number of hours.
+
+```{r}
+```
+
+
+### Confidence Intervals for $\mu_{Y|X}$ for $X = x_0$
+
+Suppose we are interested in inference for $\mu_{Y|X = x_0}$, the mean of $Y$ for a given value of $X$ ($x_0$).  We have already shown an estimate of $\mu_{Y|X = x_0}$, $$\hat{Y}_{x_0} = \hat{\beta}_0 + \hat{\beta}_1 x_0.$$  We can also say that $$\frac{\hat{Y}_{x_0} - \mu_{Y|x_0}}{s_{\hat{Y}_{x_0}}} \sim t_{df=n-2}$$ where $s_{\hat{Y}_{x_0}}^2 = s_{Y|X}^2\left(\frac{1}{n} + \frac{(x_0 - \bar{x})^2}{(n-1)s_X^2}\right)$.  Therefore, we can calculate a $C = 100\times(1-\alpha)$% confidence interval for $\mu_{Y|x_0}$ as $$\hat{Y}_{x_0} \pm t_{1-\frac{\alpha}{2},n-2}\times s_{\hat{Y}_{x_0}}.$$
+
+#### Example
+
+Calculate and interpret a 90% confidence interval for the mean systolic blood pressure for all 55 year olds.
+
+```{r}
+```
+
+#### Visualization of confidence intervals (bands) for $\mu_{Y|X}$
+
+```{r, echo=FALSE}
+new_x <- seq(min(bloodpressure$Age),max(bloodpressure$Age),length.out=100)
+new.dt <- data.frame(Age=new_x)
+preds <- predict(mod,newdata=new.dt,interval="confidence",level=0.9)
+plot(SBP ~ Age,bloodpressure)
+abline(mod)
+lines(x=new_x,y=preds[,2],lty="dashed",col="blue")
+lines(x=new_x,y=preds[,3],lty="dashed",col="blue")
+```
+
+### Prediction Intervals for $Y$ for $X = x_0$
+
+Perhaps instead of calculating an interval for the mean of $Y$ for all individuals where $X = x_0$, we are interesting in an interval for a single individual where $X = x_0$.  Note that the variance of an estimate for a single individual naturally is \textbf{larger} than the variance of an estimate for a group of individuals.  More precisely, $$\underbrace{\text{Var}(Y - \hat{Y}_{x_0})}_{\text{error by predicting an individual }Y \text{ by } \hat{Y}_{x_0}} =  \underbrace{\text{Var}(Y - \mu_{Y|x_0})}_{\text{deviation of an individual }Y\text{ from its true mean }} + \underbrace{\text{Var}(\mu_{Y|x_0} - \hat{Y}_{x_0})}_{\text{deviation of a prediction }\hat{Y}_{x_0} \text{ from its true mean }}.$$
+
+Recall earlier, we stated that $$Y \sim \mathcal{N}(\mu_{Y|X} = \beta_{0} + \beta_1 X,\sigma_{Y|X}^2 = \sigma^2),$$ which means that for any $X = x_0$, an estimate of the variance of $Y$ is $s_{Y|X}^2.$  We also showed earlier from the section on confidence intervals for $\mu_{Y|x_0}$ that an estimate for $\text{Var}(\hat{Y}_{x_0})$ is $s_{\hat{Y}_{x_0}}^2$.
+
+Based on all of this information, we can say that $$\frac{\hat{Y}_{x_0} - Y}{\sqrt{s_{Y|X}^2 + s_{\hat{Y_{x_0}}}^2}} \sim t_{df=n-2}.$$  Therefore, we can calculate a $C = 100\times(1-\alpha)$% \textbf{prediction} interval for and individual $Y$ as $$\hat{Y}_{x_0} \pm t_{1-\frac{\alpha}{2},n-2}\times \sqrt{s_{Y|X}^2 + s_{\hat{Y_{x_0}}}^2}.$$
+
+#### Example
+
+Calculate and interpret a 90% prediction interval for the systolic blood pressure of a randomly selected 55 year old.
+
+```{r}
+```
+
+#### Visualization of prediction intervals (bands) for $Y$
+
+```{r, echo=FALSE}
+new_x <- seq(min(bloodpressure$Age),max(bloodpressure$Age),length.out=100)
+new.dt <- data.frame(Age=new_x)
+preds <- predict(mod,newdata=new.dt,interval="confidence",level=0.9)
+preds2 <- predict(mod,newdata=new.dt,interval="prediction",level=0.9)
+plot(SBP ~ Age,bloodpressure)
+abline(mod)
+lines(x=new_x,y=preds[,2],lty="dashed",col="blue")
+lines(x=new_x,y=preds[,3],lty="dashed",col="blue")
+lines(x=new_x,y=preds2[,2],lty="dashed",col="red")
+lines(x=new_x,y=preds2[,3],lty="dashed",col="red")
+```
+
