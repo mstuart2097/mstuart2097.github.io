@@ -1,6 +1,5 @@
 ---
 title: "STAT 308 -- In Class Exercise"
-output: pdf_document
 ---
 
 ```{r setup, include=FALSE}
@@ -8,87 +7,36 @@ knitr::opts_chunk$set(echo = TRUE, include = TRUE,
 fig.align="center",warnings = FALSE,fig.width = 5,fig.height=3)
 ```
 
-For the problems in which calculations are needed, please include your \texttt{R} code with your answers, otherwise you would not be given full credit on the exam.
+For the problems in which calculations are needed, please include your R code with your answers, otherwise you would not be given full credit on the exam.
 
-The \texttt{cars} dataset is automatically available in base \texttt{R}.  The dataset provides information on 50 randomly selected cars and information how long it takes the cars to come to a complete stop when travelling at a particular speed.  The variables in the dataset are \texttt{speed}, the speed (in mph) at which the car was travelling when it began to stop and \texttt{dist}, the distance (in feet) it took the car to come to a complete stop.
+The *cars* dataset is automatically available in base R.  The dataset provides information on 50 randomly selected cars and information how long it takes the cars to come to a complete stop when travelling at a particular speed.  The variables in the dataset are *speed*, the speed (in mph) at which the car was travelling when it began to stop and *dist*, the distance (in feet) it took the car to come to a complete stop.
 
-1. Suppose we think that speed has nothing to do with the distance the car takes to stop.
-
-a. Report the mean and standard deviation of the stopping distance
-```{r}
-# Write code below this line.
-```
-
-b. Calculate a 95% confidence interval for the mean stopping distance.  Interpret this interval in the context of the problem.
-```{r}
-# Write code below this line.
-```
-
-c. Suppose it is known that if a car can stop in 35 feet or less, the car is deemed to be safe.  Perform a hypothesis test where we wish to test our null hypothesis that, on average, the cars are safe.  Be sure to properly specify your null and alternative hypotheses, test statistic, p-value, and decision and conclusion in the context of the problem. 
-```{r}
-# Write code below this line.
-```
-
-2.  Now, suppose someone comes to you and says if we know how fast the car was travelling when it started to stop, we can make better predictions about the stopping distance of the car.  We want to start by creating a linear model for stopping distance based on the cars' speed.
+1.  Suppose someone comes to you and says if we know how fast the car was travelling when it started to stop, we can make better predictions about the stopping distance of the car.  We want to start by creating a linear model predicting stopping distance based on the cars' speed.
 
 a. Create a scatterplot of speed vs. distance.  Determine if a linear model is valid for the given data.
 ```{r}
-# Write code below this line.
 ```
 
 b. State the least squares regression line for speed vs. distance.
 ```{r}
-# Write code below this line.
 ```
 
 c.  Interpret the intercept and the slope of the regression lines.  Comment on the validity of these interpretations.
 
 d. What is the predicted stopping distance for a car that is travelling at 17 mph?  Calculate and interpret 90% confidence and prediction intervals for this prediction.
 ```{r}
-# Write code below this line.
 ```
 
-e. Suppose now I wish to test whether or not the average stopping distance increases with the car's speed?  Perform this hypothesis test, stating the correct null and alternative hypotheses, the test statistic, p-value, and decision and conclusion in the context of the problem.
+e. Suppose now I wish to test whether or not the average stopping distance is linearly with the car's speed?  Perform this hypothesis test, stating the correct null and alternative hypotheses, the test statistic, the distribution of the test statistic under the null hypothesis, p-value, and decision and conclusion in the context of the problem.
+
 ```{r}
-# Write code below this line.
 ```
 
-f. Create an ANOVA table from the least squares regression.  Use the table to answer the following questions.
+f. Determine if the assumption of homoscedasticity is violated.
 ```{r}
-# Write code below this line.
 ```
 
-(i).  What are the sums of squares for the model?
+g. Determine if the assumption of normally distributed residuals is violated.
 ```{r}
-# Write code below this line.
 ```
 
-(ii).  What are the total sums of squares?
-```{r}
-# Write code below this line.
-```
-
-(iii).  What is the $r^2$ for the model?  Interpret this value in the context of the given problem
-```{r}
-# Write code below this line.
-```
-
-(iv).  Using $r^2$, calculate the estimate of the correlation coefficient, $r$.
-```{r}
-# Write code below this line.
-```
-
-(v). What is the estimate of the regression variance?
-```{r}
-# Write code below this line.
-```
-
-g. Determine if the assumption of homoscedasticity is violated.
-```{r}
-# Write code below this line.
-```
-
-h. Determine if the assumption of normally distributed residuals is violated.
-```{r}
-# Write code below this line.
-```
