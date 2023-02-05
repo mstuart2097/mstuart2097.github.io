@@ -1,0 +1,108 @@
+---
+title: "STAT 308 -- Homework 2"
+---
+
+```{r setup, include=FALSE}
+knitr::opts_chunk$set(echo = TRUE, include = TRUE,
+fig.align="center",warnings = FALSE,fig.width = 5,fig.height=3)
+```
+
+For the problems in which calculations are needed, please include your \texttt{R} code with your answers, otherwise you will not be given full credit.  Please upload your assignment by Thursday, September 15, 11:59 pm in a pdf file to Sakai.
+
+- 1. In a simple linear regression problem where $n=30$, we obtain $$\sum_{i=1}^n x_i = 75, \sum_{i=1}^n y_i = 660, \sum_{i=1}^n x_i^2 = 240, \sum_{i=1}^n y_i^2 = 18000, \sum_{i=1}^n x_iy_i = 1200.$$
+
+-- a. Calculate $\hat{\beta}_0$ and $\hat{\beta}_1$.
+
+```{r}
+n <- 30
+sum_x <- 75
+sum_y <- 660
+sum_x2 <- 240
+sum_y2 <- 18000
+sum_xy <- 1200
+num <- sum_xy - sum_x*sum_y/n #numerator for beta 1 hat
+den <- sum_x2 - (sum_x)^2/n #denominator for beta 1 hat
+beta1 <- num/den
+beta1
+beta0 <- sum_y/n - beta1 * sum_x/n
+beta0
+```
+
+-- b. Calculate SSE and $s^2$.
+
+```{r}
+SSE <- sum_y2 + n*beta0^2 + beta1^2*sum_x2 - 2*beta0*sum_y - 2*beta1*sum_xy + 2*beta0*beta1*sum_x
+SSE
+MSE <- SSE/(n-2)
+MSE
+```
+
+**NOTE**: In the real world, SSE is always positive!!  I am looking for the coding in these answers.
+
+- 2. Consider the dataset \texttt{AdRevenue.csv} on the course webpage.  Suppose we are interested in using the number of magazines in circulation (in millions) to predict magazine's ad revenue (in millions of dollars).
+
+-- a. Draw a scatterplot of AdRevenue vs. Circulation.  Do you think a linear relationship between Circulation and AdRevenue is appropriate?  Justify your response.
+```{r}
+adrev <- read.csv("../Data/AdRevenue.csv")
+plot(AdRevenue ~ Circulation,data=adrev)
+```
+
+There appears to be a positive linear relationship, so I think a linear model is appropriate.
+
+-- b. Using R, find the equation of the least squares regression line. 
+```{r}
+mod <- lm(AdRevenue ~ Circulation,data=adrev)
+summary(mod)
+```
+
+$\hat{Y} = 99.81 + 22.85X$
+
+-- c. Add the least squares regression line to the scatterplot in (a).
+```{r}
+plot(AdRevenue ~ Circulation,data=adrev)
+abline(mod)
+```
+
+-- d. Interpret the slope of the regression line in the context of the given problem.
+
+When the number of magazines in circulation increases by 1 million, the predicted magazine's ad revenue increases by 22.85 million dollars.
+
+-- e. Interpret the intercept of the regression line in the context of the given problem.  Does this interpretation make sense?  Why or why not?
+
+When a magazine is not in circulation, the predicted magazine's ad revenue is 99.81 million dollars.  This does not make sense because if there are no magazines in circulation, there will be no ad revenue.
+
+-- f. What do we expect the amount of ad revenue to be when there are 4 million magazines in circulation?
+```{r}
+newdata <- data.frame(Circulation=4)
+predict(mod,newdata)
+```
+
+$\hat{Y}_{x = 4} = \$191.22$ million dollars.
+
+-- g. Find the value of SSE and $s^2$ for the least squares regression line.
+```{r}
+SSE <- deviance(mod)
+df <- df.residual(mod)
+s2 <- SSE/df
+SSE
+s2
+```
+
+-- h. Determine if the assumption of homoscedasticity is violated.
+```{r}
+plot(mod,1)
+```
+
+There are multiple possible ways to answer this question. Some may see a positive slope in the residuals for
+the lower levels of circulation, suggesting that there is evidence that there is not homoscedasticity. Some
+may see a random scattering of points around zero with a similar spread, suggesting the assumption of
+homoscedasticity is not violated.
+
+-- i. Determine if the assumption of normally distributed residuals is violated.
+```{r}
+plot(mod,2)
+```
+Again, there are multiple possible answers to this question. Some of you may see the majority of the points in
+the middle fall closely to the reference line, suggesting the normality assumption is not violated. Others may
+pay closer attention to the points in the upper tail deviate dramatically from the reference line, suggesting
+there is evidence that the normality assumption is violated.
