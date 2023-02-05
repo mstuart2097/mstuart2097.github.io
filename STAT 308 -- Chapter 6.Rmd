@@ -1,10 +1,3 @@
----
-title: "STAT 308 -- Chapter 6"
-output: 
-  pdf_document
-header-includes:
-  - \usepackage{framed}
----
 
 ```{r setup, include = FALSE}
 # This line of code tells the document all the display defaults
@@ -14,15 +7,13 @@ knitr::opts_chunk$set(echo = TRUE, include = TRUE, fig.align="center",warnings =
 
 # Background Information
 
-We have previously discussed how we can model observed values of $Y$ by our knowledge of the \textbf{independent variable} $X$.  We discussed methods to assess if $\beta_1 > 0$ and create confidence intervals for $\beta_1$ and $\mu_{Y|X}$ and prediction intervals for $Y$.  We also discussed \textbf{graphical methods} to asssess the goodness of fit of our linear model.  We will now discuss \textbf{numerical methods} to make inference on our linear model.
+We have previously discussed how we can model observed values of $Y$ by our knowledge of the **independent variable** $X$.  We discussed methods to perform a hypothesis test for a significant linear model and create confidence intervals for the population slope and a prediction from the linear model and prediction intervals for $Y$.  We also discussed **graphical methods** to asssess the goodness of fit of our linear model.  We will now discuss **numerical methods** to make inference on our linear model.
 
 # Important Definitions
 
-\begin{framed}
-\textbf{Correlation Coefficient:} A number describing the \textit{strength} and \textit{direction} of the \textit{linear association} between $X$ and $Y$.   
-\end{framed}
+**Correlation Coefficient**: A number describing the *strength* and *direction* of the *linear association* between $X$ and $Y$.   
 
-The sample correlation coefficient is defined as $$r = \frac{\sum_{i=1}^n(x_i-\bar{x})(y_i - \bar{y})}{\left(\sum_{i=1}^n(x_i - \bar{x})^2\sum_{i=1}^n(y_i - \bar{y})^2\right)^{1/2}} = \frac{s_{xy}}{s_xs_y},$$ where $s_{xy}$ is the sample \textbf{covariance} between the observed $x$ and $y$.
+The sample correlation coefficient is defined as $$r = \frac{\sum_{i=1}^n(x_i-\bar{x})(y_i - \bar{y})}{\left(\sum_{i=1}^n(x_i - \bar{x})^2\sum_{i=1}^n(y_i - \bar{y})^2\right)^{1/2}}.$$
 
 It can be noted that $r$ is directly related to the estimated regression slope $\hat{\beta}_1$, $$r = \frac{s_x}{s_y}\hat{\beta}_1.$$
 
@@ -31,22 +22,21 @@ It can be noted that $r$ is directly related to the estimated regression slope $
 Recall the \texttt{bloodpressure} dataset we have previously used.  Calculate the correlation coefficient between Age and Systolic Blood Pressure.
 
 ```{r}
-library(tidyverse)
 ```
 
 ## Properties of the sample correlation coefficient
 
 - $r$ is a value between -1 and 1.
 
--- $r = 1$ means there is a direct positive linear relationship between $X$ and $Y$.
+  - $r = 1$ means there is a direct positive linear relationship between $X$ and $Y$.
 
--- $r = -1$ means there is a direct negative linear relationship between $X$ and $Y$.
+  - $r = -1$ means there is a direct negative linear relationship between $X$ and $Y$.
 
-- $r$ is a \textit{unitless} measure
+- $r$ is a *unitless* measure
 
 - $r$ has the same sign as $\hat{\beta}_1$.  That is $$r > 0 \longleftrightarrow \hat{\beta}_1 > 0$$ and $$r < 0 \longleftrightarrow \hat{\beta}_1 < 0$$
 
-- $r = 0$ means there is no \textbf{linear} association between $X$ and $Y$.  That does not mean there is no pattern at all that can be made out by the graph of $X$ and $Y$.
+- $r = 0$ means there is no *linear* association between $X$ and $Y$.  That does not mean there is no pattern at all that can be made out by the graph of $X$ and $Y$.
 
 ### Examples of scatterplots and the correlation coefficient
 
@@ -60,6 +50,7 @@ y_non <- rnorm(n=50,mean=0,sd=1)
 ```
 
 ```{r, echo=FALSE}
+library(tidyverse)
 data.frame(x=x,y=y_pos) %>% 
   ggplot(aes(x=x,y=y)) + 
   geom_point()
@@ -87,13 +78,7 @@ data.frame(x=x,y=y_par) %>%
 paste0("Correlation between X and Y is ",round(cor(x,y_par),2),".")
 ```
 
-### Example
-
-What is the correlation coefficient of the blood pressure dataset?
-
-\begin{framed}
-\textbf{Bivariate Normal Distribution:} A distribution that describes the joint relationship between two different normally distributed random variables $X$ and $Y$
-\end{framed}
+**Bivariate Normal Distribution:** A distribution that describes the joint relationship between two different normally distributed random variables $X$ and $Y$
 
 ## Parameters of Bivariate Normal Distribution:
 
@@ -107,7 +92,7 @@ What is the correlation coefficient of the blood pressure dataset?
 
 - $\rho_{XY}$: correlation between $X$ and $Y$
 
-A nice property of the bivariate normal distribution is that we can slice the distribution at a fixed value of $X$ to obtain the \textit{conditional distribution} of $Y$ at a given value of $X$.  This distribution is also normally distributed with 
+A nice property of the bivariate normal distribution is that we can slice the distribution at a fixed value of $X$ to obtain the *conditional distribution* of $Y$ at a given value of $X$.  This distribution is also normally distributed with 
 
 - $\mu_{Y|X} = \mu_Y + \frac{\rho_{XY}\sigma_Y}{\sigma_X}(X - \mu_X)$ and 
 
@@ -133,13 +118,9 @@ showing the relationship between the least squares regression line and the bivar
 
 Now, if we were to take the formula for $\sigma_{Y|X}^2$ and solve for $\rho_{XY}^2$, we would get $$\rho_{XY}^2 = \frac{\sigma_{Y}^2 - \sigma_{Y|X}^2}{\sigma_{Y}^2}.$$
 
-In other words, $\rho_{XY}^2$ is the
+In other words, $\rho_{XY}^2$ is the *percent variation* of the random variable $Y$ that can be explained through its *linear relationship* with $X$
 
-## R-squared
-
-\begin{framed}
-\textbf{R-Squared}($r^2$): the percent of variation in the response variable $Y$ that can be explained through its linear relationship with the explanatory variable $X$
-\end{framed}
+**R-Squared**($r^2$): the percent of variation in the response variable $Y$ that can be explained through its linear relationship with the explanatory variable $X$
 
 Formally, $$r^2 = \frac{SSY-SSE}{SSY},$$ where $SSY = \sum_{i=1}^n (y_i - \bar{y})^2$ and $SSE = \sum_{i=1}^n(y_i - (\hat{\beta}_0 + \hat{\beta}_1x_i))^2$.
 
@@ -156,18 +137,10 @@ Find the $r^2$ of the systolic blood pressure dataset.  Interpret this value in 
 
 - The larger the value of $r^2$, the more variance in $Y$ we can explain through its linear relationship with $X$, and thus, the stronger the linear relationship between the two variables
 
--- If $r^2 = 1$, all of the variation in $Y$ can be explained linearly by $X$ (in other words, $SSE = 0$)
+  - If $r^2 = 1$, all of the variation in $Y$ can be explained linearly by $X$ (in other words, $SSE = 0$)
 
--- If $r^2 = 0$, no variation in $Y$ can be explained linearly by $X$
+  - If $r^2 = 0$, no variation in $Y$ can be explained linearly by $X$
 
 - $r^2$ does NOT measure the magnitude of $\hat{\beta}_1$ (i.e. $r^2$ can be close to one, but $\hat{\beta}_1$ may still be close to zero, or $r^2$ can be close to zero, but $\hat{\beta}_1$ may be large.)
 
-```{r}
-```
-
 - $r^2$ is NOT a measure of the appropriateness of the linear model.
-
-
-
-
-
