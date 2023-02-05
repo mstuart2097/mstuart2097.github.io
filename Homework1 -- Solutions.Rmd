@@ -1,0 +1,126 @@
+---
+title: "STAT 308 -- Homework 1"
+author: Solutions
+output: pdf_document
+---
+
+```{r setup, include=FALSE}
+knitr::opts_chunk$set(echo = TRUE, include = TRUE)
+```
+
+- 1.
+Assume that $Z$ is a random variable from the standard normal (i.e. $\mu = 0$, $\sigma = 1$).
+
+-- a.
+Calculate $P(Z \geq -1)$.
+```{r}
+# Write your R code to answer the question here.
+pnorm(-1,mean=0,sd=1,lower.tail=FALSE)
+```
+
+OR 
+
+```{r}
+# Write your R code to answer the question here.
+1 - pnorm(-1,mean=0,sd=1)
+```
+
+-- b.
+Determine the $0.2-$quantile of $Z$.
+```{r}
+# Write your R code to answer the question here.
+qnorm(0.2,mean=0,sd=1)
+```
+
+- 2.
+$F_{a,b}$ is a random variable from the $F$-distribution with $df1 = a$ and $df2 = b$.
+
+-- a.
+Calculate $P(F_{5,40} \leq 2.9)$
+```{r}
+# Write your R code to answer the question here.
+pf(2.9,df1=5,df2=40)
+```
+-- b.
+Find $x$ such that $P(F_{6,24} \geq x) = 0.05$
+```{r}
+# Write your R code to answer the question here.
+qf(0.05,df1=6,df2=24,lower.tail=FALSE)
+```
+
+OR
+
+```{r}
+# Write your R code to answer the question here.
+qf(1-0.05,df1=6,df2=24)
+```
+
+- 3.
+Given a dataset of scores $\{0,2,5,6,3,3,3,1,4,3\}$, calculate the
+
+-- a.
+mean,
+```{r}
+# Write your R code to answer the question here.
+x <- c(0,2,5,6,3,3,3,1,4,3)
+mean(x)
+```
+-- b.
+median,
+```{r}
+# Write your R code to answer the question here.
+median(x)
+```
+-- c.
+variance.
+```{r}
+# Write your R code to answer the question here.
+var(x)
+```
+
+- 4.
+A random sample of 32 persons attending a certain diet clinic was found to have lost an average of 30 pounds over a three week period, with a sample standard deviation of 11 pounds. For these data
+
+-- a.
+Calculate a 99% confidence interval for the given data.
+```{r}
+# Write your R code to answer the question here.
+n <- 32
+est <- 30
+se <- 11/sqrt(n)
+alpha <- 0.01
+crit <- qt(1-alpha/2,df=n-1)
+est + c(-1,1)*crit*se
+```
+-- b.
+Interpret the confidence interval in the context of the given problem.
+
+We are 99% confident that the true mean weight loss over the last three weeks of all patients at the clinic is between 24.66 and 35.34 pounds.
+
+-- c.
+Suppose I wished to test my current belief that the average weight loss of the population is equal to 28 pounds.  I come to the conclusion to reject $H_0: \mu = 28$.  Based on your answer to (b), does this make sense?  Why or why not?
+
+This does not make sense because 28 is inside our 99% confidence interval, which means that we would fail to reject $H_0$.
+
+- 5.
+An outbreak of Salmonella-related illness was thought to be caused by pre-cut melons from a specific factory.  Several samples were collected and can be found in the file \texttt{salmonella.csv} on the course webpage.  A Salmonella level (in MPN/g) greater than 0.3 MPN/g is considered dangerous. To demonstrate that the levels are safe we want to show the mean level is less than 0.3 MPN/g.
+
+-- a.
+State the null and directional alternative hypothesis in symbols.  Explicitly define $\mu$.
+
+$H_0: \mu \leq 0.3$, $H_a: \mu > 0.3$.  $\mu$ is the average salmonella level (in MPN/g) of all melons from this factory.
+
+-- b.
+Find the test statistic and p-value for the data below.  Be sure to clearly identify them from your output.  Note you are performing a one-sided test.
+```{r}
+# Write your R code to answer the question here.
+salmonella <- read.csv("../Data/salmonella.csv")
+t.test(salmonella$Level,mu=0.3,alternative = "greater")
+```
+
+$t = -0.1310$, $p-value = 0.5518$
+
+-- c.
+State your decision and conclusion for the given problem.
+
+Because $p-value > 0.05$, we fail to reject $H_0$ and can say there is not significant evidence that the true mean salmonella levels of all the melons from the factory is greater than $0.3$ MPN/g.
