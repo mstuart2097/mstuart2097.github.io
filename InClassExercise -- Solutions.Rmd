@@ -1,0 +1,87 @@
+---
+title: "STAT 308 -- In Class Exercise"
+---
+
+```{r setup, include=FALSE}
+knitr::opts_chunk$set(echo = TRUE, include = TRUE,
+fig.align="center",warnings = FALSE,fig.width = 5,fig.height=3)
+```
+
+For the problems in which calculations are needed, please include your R code with your answers, otherwise you would not be given full credit on the exam.
+
+The *cars* dataset is automatically available in base R.  The dataset provides information on 50 randomly selected cars and information how long it takes the cars to come to a complete stop when travelling at a particular speed.  The variables in the dataset are *speed*, the speed (in mph) at which the car was travelling when it began to stop and *dist*, the distance (in feet) it took the car to come to a complete stop.
+
+1.  Suppose someone comes to you and says if we know how fast the car was travelling when it started to stop, we can make better predictions about the stopping distance of the car.  We want to start by creating a linear model predicting stopping distance based on the cars' speed.
+
+a. Create a scatterplot.  Determine if a linear model is valid for the given data.
+```{r}
+plot(dist ~ speed,cars)
+```
+
+- The points seems to follow a straight line with some deviations, so a linear model appears to be appropriate.
+
+b. State the least squares regression line.
+```{r}
+mod <- lm(dist ~ speed,cars)
+summary(mod)
+```
+$\hat{Y} = -17.58 + 3.932 X$
+$\hat{dist} = -17.58 + 3.932 * speed$
+
+c.  Interpret the intercept and the slope of the regression lines.  Comment on the validity of these interpretations.
+
+- When the car is travelling at 0 mph, the predicted stopping distance for the car is -17.58 feet.  This interpretation does not make sense because a car that is not moving will not have any stopping distance.
+
+- When the speed of the car increases by 1 mph, the predicted stopping distance for the car increases by 3.932 feet.
+
+d. What is the predicted stopping distance for a car that is travelling at 17 mph?  Calculate and interpret 90% confidence and prediction intervals for this prediction.
+```{r}
+newdata <- data.frame(speed = 17)
+predict(mod,newdata)
+predict(mod,newdata,interval="confidence",level=0.9)
+predict(mod,newdata,interval="prediction",level=0.9)
+```
+- When a car is travelling at 17 mph, we predict their stopping distance to be 49.27 feet.
+
+- We are 90% confident that the average stopping distance for all cars travelling at 17 mph is between 45.46 and 53.09 feet.
+
+- We are 90% confident that the stopping distance for a randomly selected car travelling at 17 mph is between 23.20 and 75.35 feet.
+
+e. Suppose now I wish to test whether or not the average stopping distance is linear with the car's speed?  Perform this hypothesis test, stating the correct null and alternative hypotheses, the test statistic, the distribution of the test statistic under the null hypothesis, p-value, and decision and conclusion in the context of the problem.
+
+Reduced Model: $\hat{dist} = \beta_0$
+
+Full Model: $\hat{dist} = \beta_0 + \beta_1 * speed$
+
+$$H_0: \beta_1 = 0$$
+$$H_a: \beta_1 \neq 0$$
+
+```{r}
+summary(mod)
+```
+$t = 9.464$, Under the null hypothesis, $t$ follows a t-distribution with $n-2 = 48$ degrees of freedom.
+
+The distribution of $t$ under the null hypothesis is important because this distribution is how we calculate the exact p-value for our hypothesis test.  $p-value = P(T_{df=n-2} > |t|)$
+
+$p-value = 1.49 \times 10^{-12}$
+
+```{r}
+### Actual calculation for p-value in simple linear regression hypothesis test
+# input for q is the absolute value of the test statistic
+2*pt(abs(9.464),df=48,lower.tail=FALSE)
+```
+Assume $\alpha = 0.05$.  $p-value < \alpha$, reject $H_0$.  We have evidence of a statistically significant linear relationship between speed of the car and its stopping distance.
+
+f. Determine if the assumption of homoscedasticity is violated.
+```{r}
+plot(mod,1)
+```
+- The points on average seem to fall around zero and appear to be evenly spread out, therefore the assumption of homoscedasticity/common variance is not violated.
+
+
+g. Determine if the assumption of normally distributed residuals is violated.
+```{r}
+plot(mod,2)
+```
+
+- The points between -2 and 2 seem to follow the 45-degree line fairly closely, so the assumption of normality/normally distributed residuals is not violated.
