@@ -1,6 +1,5 @@
 ---
 title: "STAT 308 -- Homework 4"
-output: pdf_document
 ---
 
 ```{r setup, include=FALSE}
@@ -8,19 +7,25 @@ knitr::opts_chunk$set(echo = TRUE, include = TRUE,
 fig.align="center",warnings = FALSE,fig.width = 5,fig.height=3)
 ```
 
-For the problems in which calculations are needed, please include your \texttt{R} code with your answers, otherwise you will not be given full credit.  Please upload your assignment by Thursday, September 29, 11:59 pm in a pdf file to Sakai.
+For the problems in which calculations are needed, please include your \texttt{R} code with your answers, otherwise you will not be given full credit.  Please upload your assignment by Friday, February 17, 11:59 pm in an html/pdf/word file to Sakai.
 
-- 1. Suppose we perform a simple linear regression where $$n=50, \bar{x} = -0.208, \bar{y} = 1.516, s_x = 2.354, s_y = 3.185$$ $$\hat{\beta}_0 = 1.745, \hat{\beta}_1 = 1.102, s_{Y|X} = 1.868,s_{\hat{\beta}_0} = 0.265, s_{\hat{\beta}_1} = 0.113$$
+- 1. Suppose we perform a simple linear regression where we obtain $$\bar{x} = -0.208, \bar{y} = 1.516, s_x = 2.354, s_y = 3.185$$ $$\hat{\beta}_0 = 1.745, \hat{\beta}_1 = 1.102,s_{\hat{\beta}_0} = 0.265, s_{\hat{\beta}_1} = 0.113$$
 
 -- a. Calculate the sample correlation coefficient, $r$, and the $r^2$.
 ```{r}
 ```
 
--- b. Calculate the estimate of the regression variance $s_{y|x}^2$. (Hint: Intuitively, this is the variance of $Y$ that is not explained through the linear model with $X$.)
+-- b. Calculate the estimate of the regression variance $s^2$. (Hint: Intuitively, this is the variance of $Y$ that is not explained through the linear model with $X$.)
 ```{r}
 ```
 
 - 2. Use the following incomplete ANOVA table to answer the following questions.
+
+|     |df    |Sums of Squares  |Mean Square  |F Value  |Pr(>f)   |
+|-----|:-----|:----------------|:------------|:--------|:--------|
+|Model|1 | 5.6             | | 3.3 |  |
+|Error||  | |         |         |
+|Total|40| |             |         |         |   
 
 \begin{table}[ht]
 \centering
@@ -28,10 +33,10 @@ For the problems in which calculations are needed, please include your \texttt{R
   \hline
  & df & Sum Sq & Mean Sq & F value & Pr($>$F) \\ 
   \hline
-Model & 1 & 1.47 & & 0.18 &  \\ 
+Model & 1 & 5.6 & & 3.3 &  \\ 
   Error & &  &  &  &  \\ 
    \hline
-   Total & 34 & & & & \\
+   Total & 40 & & & & \\
 \end{tabular}
 \end{table}
 
@@ -61,7 +66,7 @@ Model & 1 & 1.47 & & 0.18 &  \\
 ```{r}
 ```
 
--- b. Using the ANOVA table, perform a hypothesis test for a linear relationship between ad revenue and circulation.  Be sure to properly state your hypotheses, your test statistic, p-value, and a decision and conclusion at $\alpha = 0.05$.
+-- b. Using the ANOVA table, perform an F test for a linear relationship between ad revenue and circulation.  Be sure to properly state your hypotheses, your test statistic, p-value, and a decision and conclusion at $\alpha = 0.05$.
 ```{r}
 ```
 
