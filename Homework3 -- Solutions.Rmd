@@ -1,0 +1,70 @@
+---
+title: "STAT 308 -- Homework 3"
+---
+
+```{r setup, include=FALSE}
+knitr::opts_chunk$set(echo = TRUE, include = TRUE,
+fig.align="center",warnings = FALSE,fig.width = 5,fig.height=3)
+```
+
+For the problems in which calculations are needed, please include your R code with your answers, otherwise you will not be given full credit.  Please upload your assignment by Thursday, February 10, 11:59 pm in a html/pdf/word file to Sakai.
+
+- 1. Suppose I have a dataset, for which I perform a simple linear regression of $Y$ on $X$.
+
+-- a. I obtain a least squares regression line of $\hat{Y} = 4.95 - 1.6X$ with standard error values $s_{\hat{\beta}_0} = 0.156$ and $s_{\hat{\beta}_1} = 0.175$.  Suppose I wish to test for a significant linear relationship between $X$ and $Y$.  Find an appropriate test statitic for this hypothesis test.
+
+- $t = \frac{\hat{\beta}_1}{s_{\hat{\beta}_1}} = \frac{-1.6}{0.175} = -9.143$
+
+-- b. I calculate 95% confidence and prediction intervals for our predicted value of $Y$ for $x = 2$, which gives us $\hat{Y}_{x=2} = 1.743$, and our two intervals (0.9245,2.563) and (-0.1767,3.664).  Which one is the prediction interval?  Explain your reasoning.
+
+- The prediction interval is (-0.1767,3.664).  Prediction intervals provide a range of likely values for a single individual, which has more variability than the mean of a set of individuals, so the range of a prediction interval will always be wider than the corresponding confidence interval.
+
+-- c. Now, suppose I wish to calculate a 95% confidence interval for the predicted value of $Y$ for $x = \bar{x}$.  Will this width of this confidence interval (the difference between upper and lower values of the interval) be larger or smaller?  Explain your reasoning.
+
+- The range of confidence intervals and prediction intervals will always be smallest for predictions made at the sample mean of the explanatory variable, $\bar{x}$.  Therefore, this new 95% confidence interval will be smaller than the interval in (b).
+
+- 2. Reconsider the dataset *AdRevenue.csv* as well as our simple linear regression model of ad revenue (in millions of dollars) based on circulation (in millions).
+
+-- a. Calculate a 95% confidence interval for $\beta_1$.  Interpret this interval in the context of the problem.  
+```{r}
+AdRevenue <- read.csv("../Data/AdRevenue.csv")
+mod <- lm(formula = AdRevenue ~ Circulation, data = AdRevenue)
+confint(mod)
+```
+We are 95% confident that when number of magazines in circulation increases by 1 million, the magazine’s average ad revenue increases by between 20.95 and 24.75 million dollars.
+
+-- b. Perform a hypothesis test for a linear relationship between ad revenue and circulation.  Be sure to properly state your hypotheses, your test statistic, p-value, and a decision and conclusion at $\alpha = 0.05$.
+
+Reduced Model: $\hat{AdRev} = \beta_0$
+
+Full Model: $\hat{AdRev} = \beta_0 + \beta_1 Circulation$
+
+$$H_0 : \beta_1 = 0$$
+
+$$H_0 : \beta_1 \neq 0$$
+
+```{r}
+summary(mod)
+```
+
+test statistics: $t = 24.01$, p-value: $p < 2 \times 10^{-16}$.
+
+Because $p < \alpha$, we reject $H_0$ and conclude there is a statistically significant linear relationship between the number of magazine's in circulation and their total ad revenue.
+
+-- c. What is the distribution of the test statistic in (b) under the null hypothesis?
+
+$t$ follows a t-distribution with $n - 2 = 68$ degrees of freedom.
+
+-- d. Calculate a 95% confidence interval for the predicted ad revenue when there are 2.5 million subscriptions in circulation.  Interpret this interval in the context of the problem.
+```{r}
+newdata <- data.frame(Circulation = 2.5)
+predict(mod,newdata,interval="confidence")
+```
+- We are 95% confident that when there are 2.5 million magazines in circulation, the predicted ad revenue for the magazine is between 146.8 and 167.1 million dollars.
+
+-- e. Calculate a 95% prediction interval for a randomly selected magazine with 2.5 million subscriptions in circulation.  Interpret this interval in the context of the problem.
+```{r}
+newdata <- data.frame(Circulation = 2.5)
+predict(mod,newdata,interval="prediction")
+```
+- We are 95% confident that a randomly selected magazine with  2.5 million magazines in circulation will have an ad revenue for the magazine between 72.08 and 241.8 million dollars.
