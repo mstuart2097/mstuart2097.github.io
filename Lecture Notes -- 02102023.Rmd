@@ -1,0 +1,146 @@
+
+
+```{r setup, include = FALSE}
+# This line of code tells the document all the display defaults
+knitr::opts_chunk$set(echo = TRUE, include = TRUE, fig.align="center",warnings = FALSE,fig.width = 5,fig.height=3)
+```
+
+# Background Information
+
+We have discussed hypothesis testing for a simple linear regression.  We have also discussed $r^2$ and how it is used to determine the percent of variation in $Y$ that can be explained by its *linear* relationship with $X$.  Now, we will show a new way to obtain this information that can be easily extended to multiple linear regression.
+
+**Analysis of Variance (ANOVA)**: A table that breaks down the sources of the variation in the response variable, $Y$, when we include the explanatory variable, $X$, in our linear model.  The total variation of $Y$ is the same as the total sums of squares.
+
+$$\text{Total Sums of Squares} = \text{SST} = \sum_{i=1}^n (y_i - \bar{y})^2$$ $$ = \sum_{i=1}^n (\hat{y}_i - \bar{y})^2 + \sum_{i=1}^n (y_i - \hat{y}_i)^2 $$ $$ = \text{Model Sums of Squares} + \text{Sum of Squared Errors}$$
+where $\hat{y}_i = \hat{\beta}_0 + \hat{\beta}_1x_i$.
+
+**Total Sums of Squares (SST)**:  The total variation of the response variable $Y$
+
+**Model Sums of Squares (SSM)**:  The amount of variation in $Y$ explained by the linear model with $X$
+
+$$\text{SSM} = \sum_{i=1}^n (\hat{y}_i - \bar{y})^2$$
+
+**Error Sums of Squares (SSE)**:  The amount of variation in $Y$ *not* explained by the linear model with $X$
+$$\text{SSE} = \sum_{i=1}^n (y_i - \hat{y}_i)^2$$
+
+- Note: For linear regression, it is always true that SST = SSM + SSE.
+
+**Mean Squared for Model (MSM)**:  The variance of $Y$ explained by the linear model with $X$
+
+$$\text{MSM} = \frac{\text{SSM}}{p-1},$$
+where $p - 1$ is the *model degrees of freedom* for our linear model, and $p$ is the number of parameters ($\beta$s) in our linear model.
+
+- You can also think of the *model degrees of freedom* as the number of $\beta$s we add to the reduced model to get the full model.
+
+- For simple linear regression: $p - 1$ = 1 model degree of freedom.
+
+Reduced Model: $\hat{Y} = \beta_0$
+
+Full Model: $\hat{Y} = \beta_0 + \beta_1 X$
+
+**Mean Squared Error (MSE)**:  The variance of $Y$ not explained by the linear model with $X$
+
+$$\text{MSE} = \frac{\text{SSE}}{n - p},$$
+where $n - p$ is the *error degrees of freedom* for our linear model.
+
+- error degrees of freedom tell us the number of additional parameters we can add to our model without overfitting our model
+
+- $n$ is our sample size and $p$ is the number of parameters in our linear model.
+
+- For simple linear regression, the *error degrees of freedom* are $n-2$.
+
+**F Statistic**: A statistic that measures the ratio of the variances of the response variable $Y$ that is explained/not explained by the model, $$F = \frac{\text{MSM}}{\text{MSE}} = \frac{\text{Explained Variance}}{\text{Unexplained Variance}}$$
+
+- For Simple linear regression, $$F = \frac{\hat{\beta}_1^2}{s_{\hat{\beta}_1}^2} = \left(\frac{\hat{\beta}_1}{s_{\hat{\beta}_1}}\right)^2 = t^2$$
+
+Recall from Chapter 3, if $t \sim t_{df=\nu}$, then $F = t^2 \sim F_{df1=1,df2=\nu}$.  Then, we can equivalent say that, if we are testing for a significant linear relationship between $X$ and $Y$, the p-value would be calculated as $$p-value = P(F_{df1=p-1,df2=n-p} > F) = P\left(F_{df1=p-1,df2=n-p} > \frac{\text{MSM}}{\text{MSE}}\right).$$
+
+- If $p-value \leq \alpha$, then we reject $H_0$ and say there is a significant linear relationship between $X$ and $Y$.
+
+- If $p-value > \alpha$, then we fail to reject $H_0$ and say there is not a significant linear relationship between $X$ and $Y$.
+
+## ANOVA Table Format
+
+|     |df    |Sums of Squares  |Mean Square  |F Value  |Pr(>f)   |
+|-----|:-----|:----------------|:------------|:--------|:--------|
+|Model|$p-1$ | $\text{SSM}$             | $\text{MSM} = \frac{\text{SSM}}{p-1}$| $F=\frac{\text{MSM}}{\text{MSE}}$ | $P(F_{df1=p-1,df2=n-p} > F)$ |
+|Error|$n-p$ | $\text{SSE}$              | $\text{MSE} = \frac{\text{SSE}}{n-p}$|         |         |
+|Total|$n-1$ | $\text{SST} = \text{SSM} + \text{SSE}$ |             |         |         |   
+
+## Example
+
+Use the following incomplete ANOVA table to answer the following questions.
+
+|     |df    |Sums of Squares  |Mean Square  |F Value  |Pr(>f)   |
+|-----|:-----|:----------------|:------------|:--------|:--------|
+|Model|1 | 50.83             | |  |  |
+|Error|48|  | |         |         |
+|Total| | 98.48 |             |         |         |   
+
+```{r}
+df_model <- 1
+df_error <- 48
+SSM <- 50.83
+SST <- 98.48
+df_total <- df_model + df_error
+SSE <- SST - SSM
+SSE
+MSM <- SSM/df_model
+MSE <- SSE/df_error
+MSM
+MSE
+f <- MSM/MSE
+f
+p_val <- 1 - pf(q=f,df1=df_model,df=df_error) # p-value is the area to the right of the f statistic
+p_val <- pf(q=f,df1=df_model,df=df_error,lower.tail=FALSE) # alternative way to calculate the p-value
+p_val
+```
+
+a. What is the total degrees of freedom?
+
+- 49
+
+b. What is the sum of squared errors?
+
+- 47.65
+
+c. What is the mean squares of the model and the mean squared error?
+
+- Mean Squares for the model is 50.83
+
+- Mean Squared Error is 0.9927
+
+d. What is the F statistic and p-value for testing for a significant linear relationship?
+
+- F statistic is 51.20
+
+- $p-value$ is $4.246 \times 10^{-9}$
+
+## Example
+
+Using the bloodpressure dataset, obtain an ANOVA table and perform a hypothesis test for a significant linear relationship.
+
+Reduced Model: $\hat{SBP} = \beta_0$
+
+Full Model $\hat{SBP} = \beta_0 + \beta_1 Age$
+
+$$H_0: \beta_1 = 0$$
+$$H_a: \beta_1 \neq 0$$
+
+```{r}
+bloodpressure <- read.csv("../Data/bloodpressure.csv")
+mod <- lm(SBP ~ Age,bloodpressure)
+anova(mod) # Provides ANOVA table for the linear model
+summary(mod) # Compare the results from the ANOVA table to the summary table
+```
+F value is the F statistic = 21.33, $p-value = 7.867 \times 10^{-5}$.
+
+At $\alpha = 0.05$, we reject $H_0$ and conclude that there is a statistically significant linear relationship between age and systolic blood pressure.
+
+## What can we obtain from an ANOVA table?
+
+We can find an estimate for the regression variance/mean squared error.  $$s^2 = \text{MSE} = \frac{\text{SSE}}{n-p}$$
+
+We can find the proportion of variance explained by the model ($r^2$).
+$$r^2 = \frac{\text{SSM}}{\text{SST}}.$$
+
