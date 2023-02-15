@@ -1,0 +1,121 @@
+
+```{r setup, include=FALSE}
+knitr::opts_chunk$set(echo = TRUE, include = TRUE,
+fig.align="center",warnings = FALSE,fig.width = 5,fig.height=3)
+```
+
+- 1. Use the following incomplete ANOVA table to answer the following questions.
+
+|     |df    |Sums of Squares  |Mean Square  |F Value  |Pr(>f)   |
+|-----|:-----|:----------------|:------------|:--------|:--------|
+|Model|1 |             | | | 0.0011 |
+|Error||  |10.5  |         |         |
+|Total|60| |             |         |         |   
+
+-- a. What are the error degrees of freedom?
+```{r}
+df_total <- 60
+df_model <- 1
+df_error <- df_total - df_model
+df_error
+```
+$df_e$ = 59
+
+-- b. What are the sum of squared errors?
+```{r}
+## MSE = SSE/df_error
+MSE <- 10.5
+SSE <- MSE*df_error
+SSE
+```
+$SSE = 619.5$
+
+-- c. What is the F statistic?
+```{r}
+# Use the p-value to get the F statistic
+p_val <- 0.0011
+f <- qf(0.0011,df1=df_model,df2=df_error,lower.tail=FALSE)
+f
+```
+$F = 11.78$
+
+-- d. What is the mean squares for the model?
+```{r}
+# F = MSM/MSE
+MSM <- f*MSE
+MSM
+```
+$MSM = 123.7$
+
+-- e. What are the sum of squares for the model?
+```{r}
+# MSM = SSM/df_model
+SSM <- MSM * df_model
+SSM
+```
+$SSM = 123.7$
+
+-- f. What is the r-squared for this dataset?
+```{r}
+SST <- SSM + SSE
+r2 <- SSM/SST
+r2
+```
+$r^2 = 0.1664$
+
+-- g. What is the total variance for the response variable $Y$ ($s_Y^2$)?
+```{r}
+# sy2 = SST/df_total
+sy2 <- SST/df_total
+sy2
+```
+$s_y^2 = 12.39$
+
+- 2. Reconsider the dataset cars in R.
+
+-- a. Obtain an ANOVA table for this model.  
+```{r}
+mod <- lm(dist ~ speed,cars)
+anova(mod)
+```
+
+-- b. Using the ANOVA table, perform an F test for a linear relationship between the car's speed and stopping distance.  Be sure to properly state your hypotheses, your test statistic, p-value, and a decision and conclusion at $\alpha = 0.05$.
+
+Reduced Model: $\hat{Dist} = \beta_0$
+
+Full Model: $\hat{Dist} = \beta_0 + \beta_1 Speed$
+
+$$H_0: \beta_1 = 0$$
+
+$$H_a: \beta_1 \neq 0$$
+$F = 89.57$, $p = 1.49 \times 10^{-12}$, $p < \alpha$, so we reject $H_0$ and we can conclude there is a statistically significant linear relationship between the car's speed and its stopping distance.
+
+```{r}
+anova(mod)
+```
+
+-- c. What is the distribution the test statistic follows under $H_0$?
+
+$F$ follows and F distribution with 1 and 48 degrees of freedom.
+
+-- d. Using the ANOVA table, calculate the value of $r^2$.  Interpret this value in the context of the problem.
+```{r}
+SSM <- 21186
+SSE <- 11354
+SST <- SSM + SSE
+r2 <- SSM/SST
+r2
+```
+$r^2 = 0.6511$.  65.11% of the variation in car's stopping distance is explained through its linear relationship with the car's speed.
+
+-- e. Determine the value of the correlation coefficient for the linear model.
+```{r}
+plot(dist ~ speed,cars)
+# Look at the estimate of the slope of the least squares regression line
+summary(mod)
+# The estimate for this linear model is positive, so r is also positive
+r <- sqrt(r2)
+r
+```
+
+$r = 0.8069$.

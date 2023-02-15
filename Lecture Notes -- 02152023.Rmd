@@ -1,0 +1,194 @@
+
+
+```{r setup, include = TRUE}
+# This line of code tells the document all the display defaults
+knitr::opts_chunk$set(echo = TRUE, include = TRUE, fig.align="center",warnings = FALSE,fig.width = 5,fig.height=3)
+```
+
+# Background Information
+
+We have discussed simple linear regression techniques, where we have are using a singular explanatory ($x$) variable to make a linear prediction about a singular repsonse ($y$) variable.  However, suppose that we have mulitple explanatory ($x_1,x_2,\dots,x_n$) variables that we can use to make a better prediction of $y$ (i.e. lower the variance of $y$ given $x_1,x_2,\dots,x_n$).  This chapter will introduce the concept of multiple linear regression.
+
+# Motivating Example
+
+Consider the following dataset on sales at All Green franchises with the following variables:
+
+- NetSales: Net Sales of the franchise (in 1000s of dollars)
+
+- SqFt: Square footage of the store (in 1000s)
+
+- Inventory: Amount of inventory (in 1000s of dollars)
+
+- Advertising: Amount spent on advertising (in 1000s of dollars)
+
+- SizeofDist: Size of district (per 1000 families)
+
+- NoofStores: Number of competing stores in the district
+
+```{r}
+allgreen <- read.csv("../data/AllGreen.csv")
+```
+
+Previously, we have only discussed using one variable to make linear predictions about the response.  For example, suppose we believe that the net sales of a franchise is linearly related to the amount of money they spent in advertising.
+
+```{r}
+plot(NetSales ~ Advertising,allgreen)
+```
+
+Or, perhaps we can say the net sales is linearly related to the square footage of the store.
+
+```{r}
+plot(NetSales ~ SqFt,allgreen)
+```
+
+Now, what if we can take both of these explanatory variables, advertising and square footage, and use them **both** in conjunction to make a linear prediction of the net sales of the franchise.
+
+```{r}
+# Need to run install.packages("plotly")
+# This package prints need 3d interactive graphs
+library(plotly)
+plot_ly(allgreen,
+        x=~Advertising, # First explanatory variable
+        y=~SqFt, # Second explanatory variable,
+        z=~NetSales) %>% # Response variable
+  add_markers()
+```
+
+**Multiple Linear Regression**: An extension of simple linear regression into where we can estimate a response variable $Y$ based on multiple explanatory variables $X_1,X_2,\dots,X_{p-1}$. $p-1$ is the number of explanatory variables in our linear structure.
+
+## Assumptions Needed for Multiple Linear Regression Models
+
+(Note, these assumptions are the same for simple linear regression, just extended to multiple linear regression)
+
+- Existence: For any given value of $X_1,\dots,X_p$, $Y$ is a random variable with a certain probability distribution with a finite mean and variance.
+Define:
+-- $\mu_{Y|X_1,\dots,X_{p-1}}$ - the population mean of $Y$ for a fixed $X_1,\dots,X_{p-1}$
+-- $\sigma_{Y|X_1,\dots,X_{p-1}}^2$ - the population variance of $Y$ for a fixed $X_1,\dots,X_{p-1}$
+  
+- Independence: The observed values of $Y$ are statistically independent of one another given $X_1,\dots,X_{p-1}$
+
+  
+- Linearity: $\mu_{Y|X} = \beta_0 + \beta_1X_1 + \beta_2X_2 + \dots + \beta_{p-1}X_{p-1}$ or equivalently $$Y = \beta_0 + \beta_1X_1 + \beta_2X_2 + \dots + \beta_{p-1}X_{p-1} + \epsilon$$
+  
+where $\epsilon$ is the error of the multiple linear model.
+  
+The next two assumptions discuss the distribution of $\epsilon$.
+  
+-- Homoscedasticity: The variance of $Y$ is the same for different given values of $X_1,\dots,X_{p-1}$ (i.e. $\sigma_{Y|X_1,\dots,X_p}^2 = \sigma^2$)
+
+-- Normality: For any fixed value of $X_1,\dots,X_{p-1}$, $Y$ is normally distributed.  This fact makes analysis of the data easier.  
+
+
+All of these assumptions put together lead us to our full mathematical model we will assume: $$Y \sim \mathcal{N}(\beta_0 + \beta_1 X_1 + \dots + \beta_{p-1}X_{p-1},\sigma^2)$$.
+
+## "Least squares" regression estimate
+Recall from Chapter 5 that, for a simple linear regression model, the estimates for the regression parameters $\hat{\beta}_0$ and $\hat{\beta}_1$ can be found by minimizing the sum of squared errors $$\text{SSE} = \sum_{i = 1}^n (y_i - (\hat{\beta}_0 + \hat{\beta}_1 x_i))^2.$$
+For multiple linear regression, this estimation procedure is the same, except now we have additional $\beta$ parameters that we need to estimate.  In other words, to find estimates for the regression parameters $\hat{\beta}_0, \hat{\beta}_1, \dots, \hat{\beta}_{p-1}$, we need to minimize $$\text{SSE} = \sum_{i = 1}^n (y_i - (\hat{\beta}_0 + \hat{\beta}_1 x_{i,1} + \dots + \hat{\beta}_{p-1}x_{i,p-1}))^2.$$ where $x_{i,j}$ is the $i^{th}$ observation from variable $j$ for $j = 1,\dots,{p-1}$.
+
+### Example
+
+Calculate the least squares regression line for predicting AllGreen's net sales by both Advertising spending and square footage of the stores.
+
+```{r}
+# Advertising + Sqft because they are added together in our linear model
+mod <- lm(NetSales ~ Advertising + SqFt,allgreen)
+summary(mod)
+```
+
+## Interpretation of multiple linear regression parameters
+
+Recall from Chapter 5, the interpretation of the slope in simple linear regression is the change in the predicted value of the response ($\hat{Y}$) for a 1 unit increase in the explanatory variable $X$.
+
+For multiple linear regression, the interpretation of the parameter ($\beta$) for a particular explanatory variable is very similar, except we have to account for the fact that there are other explanatory variables in our model.
+
+To account for this fact, when interepreting a $\beta$ associated with a particular explanatory variable $X$, we need to include the phrase **holding all other variables constant**
+
+For the interpretation of the intercept ($\beta_0$), we need to state the fact that this is the predicted value of the response ($\hat{Y}$) when **all** of the explanatory variables in the dataset are equal to 0. 
+
+### Example 
+
+Interpret the linear model parameters for the AllGreen regression model conducted above.
+
+```{r}
+```
+
+## Checking for assumptions of multiple linear regression
+
+The methods of checking the assumptions of homoscedasticity and normally distributed residuals for multiple linear regression are the exact same as the methods for simple linear regression!
+
+### Example
+
+Determine if the assumptions for homoscedasticity and normally distributed residuals for the AllGreen multiple linear regression model are violated.
+
+```{r}
+```
+
+## Information about least squares regression
+
+Regression variance: $s^2 = \frac{1}{n - p}SSE.$
+
+- $n-p$ is the error degrees of freedom from the ANOVA table
+
+R-squared: $r^2 = \frac{SSM}{SST} = \frac{SST - SSE}{SST}$.
+
+```{r}
+```
+
+## Multiple Linear Regression in Matrix Form
+
+There is not a nice scalar form to calculate the regression coefficients from a multiple linear regression model, but we can calculate this using matrix algebra.
+
+### Matrix Transpose:
+
+Consider a matrix $\boldsymbol{A}_{2\times 3}$.  The transpose of the matrix $\boldsymbol{A}'$ is the same matrix with the rows and columns flipped (i.e. the 1st row of $\boldsymbol{A}$ is the 1st column of $\boldsymbol{A}'$)
+
+### Matrix Addition:
+
+Consider matrices $\boldsymbol{A}_{2\times3} = \begin{bmatrix} a_{11} & a_{12} & a_{13} \\ a_{21} & a_{22} & a_{23} \end{bmatrix}$ and $\boldsymbol{B}_{2\times3} = \begin{bmatrix} b_{11} & b_{12} & b_{13} \\ b_{21} & b_{22} & b_{23} \end{bmatrix}$, then 
+
+$$\boldsymbol{A} + \boldsymbol{B} = \begin{bmatrix}a_{11}+b_{11} & a_{12} + b_{12} & a_{13} + b_{13} \\ a_{21}+b_{21} & a_{22} + b_{22} & a_{23} + b_{23} \end{bmatrix}$$
+
+### Matrix Multiplication:
+
+Consider matrices $\boldsymbol{A}_{2\times3} = \begin{bmatrix} a_{11} & a_{12} & a_{13} \\ a_{21} & a_{22} & a_{23} \end{bmatrix}$ and $\boldsymbol{B}_{3\times1} = \begin{bmatrix} b_{11} \\ b_{21} \\ b_{31} \end{bmatrix}$, then $$\boldsymbol{A} \times \boldsymbol{B} = \begin{bmatrix} a_{11}b_{11} + a_{12}b_{21} + a_{13}b_{31} \\  a_{21}b_{11} + a_{22}b_{21} + a_{23}b_{31}\end{bmatrix}$$
+
+### Diagonal Matrix:
+
+A diagonal matrix is a square matrix (i.e. same number of rows and columns) where all of the off-diagonal values is 0 $(a_{ij} = 0$ when $i \neq j)$.
+
+### Matrix Inverse:
+
+Consider a square matrix $\boldsymbol{A}_{n \times n}$.  The inverse of the matrix $\boldsymbol{A}^{-1}$ is  the matrix where $\boldsymbol{A} \times \boldsymbol{A}^{-1} = \boldsymbol{A}^{-1} \times \boldsymbol{A} = \boldsymbol{I}$ where $\boldsymbol{I}$ is the identity matrix -- a diagonal matrix where the values in the diagonal are all 1$.
+
+### Connection to Multiple Linear Regression:
+
+Now, consider the following matrices:
+
+$$\boldsymbol{Y}_{n \times 1} = \begin{bmatrix} y_1 \\ y_2 \\ \vdots \\ y_n \end{bmatrix}$$
+
+$$\boldsymbol{X}_{n \times p} = \begin{bmatrix} 1 & x_{1,1} & x_{1,2} & \cdots & x_{1,p-1} \\ 1 & x_{2,1} & x_{2,2} & \cdots & x_{2,p-1} \\ \vdots & \vdots & \vdots & \ddots & \vdots \\ 1 & x_{n,1} & x_{n,2} & \cdots & x_{n,p-1} \end{bmatrix}$$
+
+$$\boldsymbol{\beta}_{p \times 1} = \begin{bmatrix} \beta_0 \\ \beta_1 \\ \vdots \\ \beta_{p-1} \end{bmatrix}$$
+
+$$\boldsymbol{\epsilon}_{n \times 1} = \begin{bmatrix} \epsilon_1 \\ \epsilon_2 \\ \vdots \\ \epsilon_n \end{bmatrix}$$
+
+Note that, we previously stated $$Y = \beta_0 + \beta_1X_1 + \beta_2X_2 + \dots + \beta_{p-1}X_{p-1} + \epsilon.$$ Using matrix algebra, this is equivalent to saying $$\boldsymbol{Y}_{n\times 1} = \boldsymbol{X}_{n\times p}\boldsymbol{\beta}_{p\times 1} + \boldsymbol{\epsilon}_{n\times 1}.$$
+
+For ease of use, I will not include the subscript describing the matrix dimensions in the rest of these lecture notes.
+
+The sum of squared errors used to find the least squares regression estimates can also be found using matrix notation: $$SSE  = (\boldsymbol{Y} - \boldsymbol{X}\hat{\boldsymbol{\beta}})'(\boldsymbol{Y} - \boldsymbol{X}\hat{\boldsymbol{\beta}}).$$  Using this information, the least squares regression estimate for $\boldsymbol{\beta}$ is calculated by $$\hat{\boldsymbol{\beta}} = (\boldsymbol{X}'\boldsymbol{X})^{-1}\boldsymbol{X}'\boldsymbol{Y}.$$ 
+
+### Other items you can get from matrix algebra for multiple linear regression:
+
+Vector of Predicted values: $\hat{\boldsymbol{Y}} = \boldsymbol{X}\hat{\boldsymbol{\beta}}$
+
+Sum of Squared Errors: $\text{SSE} = \boldsymbol{Y}'\boldsymbol{Y} - \hat{\boldsymbol{\beta}}'\boldsymbol{X}'\boldsymbol{Y}$
+
+Model Sums of Squares: $\text{SSE} = \hat{\boldsymbol{\beta}}'\boldsymbol{X}'\boldsymbol{Y} - n\bar{Y}^2$
+
+Variance of Regression Estimates: $s_{\hat{\beta}_k}^2$ for $k = 1,\dots,p$ is $k^th$ diagonal element of $s^2(\boldsymbol{X}'\boldsymbol{X})^{-1}$
+
+ Let's see this in action with the allgreen dataset.
+
+```{r}
+```
