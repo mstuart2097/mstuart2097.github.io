@@ -1,6 +1,5 @@
 ---
 title: "STAT 308 -- Take Home Exam"
-output: pdf_document
 ---
 
 ```{r setup, include=FALSE}
@@ -8,109 +7,155 @@ knitr::opts_chunk$set(echo = TRUE, include = TRUE,
 fig.align="center",warnings = FALSE,fig.width = 5,fig.height=3)
 ```
 
-This take home exam is worth a total of 50 points, and counts for half of your Exam 1 grade, along with the in class portion of the exam.  For the problems in which calculations are needed, please include your \texttt{R} code with your answers.  Turn in this exam to Sakai by Thursday, October 6 at 2:30 pm.
+This take home exam is worth a total of 100 points.  For the problems in which calculations are needed, please include your *R* code with your answers.  Turn in this exam to Sakai by Friday, February 24 at **3:35 pm**.
 
-1. For the following question, we will define
+1.  The following questions will test your basic *R* skills.
 
-- $\beta_0$ and $\beta_1$ as the population intercept and slope for the linear model with $Y$ as the response and $X$ as the explanatory variable.
+a. [4 pts] Construct a vector of the numbers 0,4,3,6,1,6,2,4,1,8,9,5.  Calculate the mean, median, and variance of the vector of numbers.
 
-  For a random sample of $n = 40$, we obtain the following sample statistics:
-$$\bar{x} = 2, \bar{y} = -3, s_x = 2.5, s_y = 4.5, r = -0.6.$$
+b. [2 pts] Suppose $X \sim \mathcal{N}(2,3)$.  Calculate $P(X > 4)$.
 
-a. [2 pts] Calculate estimates of the least squares regression line, $\hat{\beta}_0$ and $\hat{\beta}_1$.
+c. [2 pts] Suppose $X \sim t_{df=9}$.  Calculate the $80^{th}$ percentile of $X$.
+
+d. [2 pts] Suppose $X \sim F_{df1=2,df2=12}$.  Calculate $P(X < 2)$.
+
+2.  For a random sample of $n = 50$, we obtain the following sample statistics:
+$$\bar{x} = 4, \bar{y} = 7, s_x = 1.3, s_y = 2.9, r = 0.8.$$
+
+a. [4 pts] What is the estimate of the least squares regression line?
 ```{r}
 ```
 
-b. [2 pts] Calculate the sum of squared errors, SSE, and the estimate of the regression variance, $s_{Y|X}^2$. (Hint: recall that SSE is the percent of the total sums of squares not explained by the linear model).
+b. [2 pts] What is the percent variation in $Y$ that can be explained by its linear relationship with $X$?
 ```{r}
 ```
 
-c. [2 pts] Calculate the standard errors of the regression estimates, $s_{\hat{\beta}_0}$ and $s_{\hat{\beta}_1}$.
+c. [4 pts] What are the sum of squared errors for the linear model of $Y$ with $X$ as an explanatory variable?
 ```{r}
 ```
 
-d. [2 pts] Calculate a test statistic and p-value for testing $H_0: \beta_1 = 0$ vs. $H_a: \beta_1 > 0$.
+d. [3 pts] What are the mean squares for the model?
 ```{r}
 ```
 
-For the following questions, we will use the dataset \texttt{nfl} contains information about the regular season games from the 2021 regular season, including
-
-- \texttt{Week}: The Week the game took place
-
-- \texttt{Day}: The Day of the week the game took place
-
-- \texttt{Date}: The Date of the game
-
-- \texttt{Time}: The time the game started (in Eastern Time)
-
-- \texttt{AwayTeam}: The game's away team
-
-- \texttt{HomeTeam}: The game's home team
-
-- \texttt{YdsDiff}: The difference in the offensive yards between the home team and away team
-
-- \texttt{TODiff}: The difference in turnovers between the home team and away team
-
-- \texttt{PtsDiff}: The difference in points scored between the home team and away team
-
-2. Suppose we think that the point difference is not dependent on any other explanatory variables.
-
-a. [2 pts] What do we expect the point differential between a randomly selected home and away team to be?
+e. [3 pts] What is the estimate of the regression variance?
 ```{r}
 ```
 
-b. [4 pts] Calculate a 99% confidence interval for the expected point differential.  Interpret this interval in the context of the problem.
+f. [2 pts] Calculate an appropriate test statistic in a hypothesis test for a significant linear relationship between $X$ and $Y$.
 ```{r}
 ```
 
-c. [4 pts] Bookmakers often maneuver their point spreads to account for the belief that, on average, home teams win by three points.  Perform a hypothesis test on the counterargument that home teams do not, on average, win by three points.  Be sure to formally state all the necessary information to perform a formal hypothesis test.  Assume $\alpha = 0.05$.
+g. [2 pts] What is the distribution of the test statistic in (f) under $H_0$?
+
+3. Consider the following incomplete ANOVA table for a simple linear regression model.
+
+|     |df    |Sums of Squares  |Mean Square  |F Value  |Pr(>f)   |
+|-----|:-----|:----------------|:------------|:--------|:--------|
+|Model|1 |              | | 32.7 |  |
+|Error||  | 48.2 |         |         |
+|Total|59|  |             |         |         |  
+
+a. [2 pt] What are the error degrees of freedom?
 ```{r}
 ```
 
-3. Now, suppose we think that the observed point differentials can be better explained through a linear relationship with the difference in offensive yards gained.
-
-a. [2 pts] Create a scatterplot of yard differential vs. point differential.  Comment on the validity of a linear relationship.
+b. [3 pts] What are the sums of squares for the model and the sum of squared errors?
 ```{r}
 ```
 
-b. [2 pts] Calculate a least squares regression line using \texttt{R}.  Formally state the regression line.
+c. [3 pts] What is the p-value used to test for a significant linear relationship between $X$ and $Y$?
 ```{r}
 ```
 
-c. [2 pts] Determine if there are any influential observations in the given dataset.  If you determine that there are, state your new least squares regression line.
+d. [2 pts] What is the sample variance of $Y$ ($s_y^2$)?
 ```{r}
 ```
 
-\textbf{For the remainder of this exam, use either the regression line in (b) if you determine there are no influential observations, or the line in (c) if you determine that there are influential observations.}
-
-d. [2 pts] What is the estimate of the regression variance?
+e. [2 pts] What is the r-squared for the simple linear regression model?
 ```{r}
 ```
 
-e. [2 pts] Interpret the estimate of the population slope in the context of the problem.
+f. [3 pts] If I were to construct a 95% confidence interval for the slope, $\beta_1$, would 0 be inside the interval?  Briefly explain your answer.
 
-f. [2 pts] Interpret the estimate of the population intercept in the context of the problem.  Does this interpretation make sense?  Why or why not?
+4.  Suppose I create a simple linear regression model for a particular dataset.  From there, I calculate 95% confidence and prediction intervals for the value of $Y$ when $X = 4.2$ and when $X = 3.5$ (the sample mean of $X$).  The four intervals are (70.19,71.60), (80.81,82.70), (59.23,82.56), and (70.07,93.44).
 
-g. [2 pts] Determine if the assumption of heteroscedasticity is violated.
+a. [2 pts] Which of the four intervals is the 95% confidence interval for $\hat{Y}$ when $X = 4.2$?
+
+b. [2 pts] Which of the four intervals is the 95% prediction interval for $\hat{Y}$ when $X = 4.2$?
+
+c. [1 pt] Which of the four intervals is the 95% prediction interval for $\hat{Y}$ when $X = 3.5$?
+
+The dataset *realestate.csv* contains information on a sample of 414 houses that were recently sold in New Taipei City, Taiwan.  The variables listed are
+
+- *Age*: The age of the house in years
+
+- *MRT*: The distance (in meters) to the nearest MRT (public transportation) station
+
+- *Convenience*: The number of convenience stores within 1 kilometer of the house
+
+- *Latitude*: The degrees latitude of the location of the house
+
+- *Longitude*: The degrees longitude of the location of the house
+
+- *Price*: The house's sales price (in millions of New Taiwan dollars).
+
+5. Suppose we wish to create a model to predict the house's sales price using the distance to the nearest MRT station as an explanatory variable.
+
+a. [2 pts] Create a scatterplot of the house's sales price against distance to the nearest MRT station.  Comment on the validity of a linear relationship.
 ```{r}
 ```
 
-h. [2 pts] Determine if the assumption of normally distributed residuals is violated.
+b. [3 pts] Calculate a least squares regression line using *R*.  Formally state the regression line.
 ```{r}
 ```
 
-i. [4 pts] Find the $r^2$ for this linear regression model.  Interpret the $r^2$ in the context of the problem. 
+c. [3 pts] Interpret the estimate of the slope in the context of the problem.
+
+d. [3 pts] Interpret the estimate of the intercept in the context of the problem.  Does this interpretation make sense?  Why or why not?
+
+e. [2 pts] Report and interpret the r-squared in the context of the problem.
 ```{r}
 ```
 
-j. [4 pts] Calculate a 99% confidence interval for the population slope.  Interpret this interval in the context of the problem.
+f. [4 pts] Calculate a 95% confidence interval for the slope.  Interpret this interval in the context of the problem.
 ```{r}
 ```
 
-k. [4 pts] Perform a hypothesis test for a positive linear relationship between yard differential and point differential.  Be sure to formally state all the necessary information to perform a formal hypothesis test.  Assume $\alpha = 0.01$.
+g. [5 pts] Perform a hypothesis test for a linear relationship between yard differential and point differential.  Be sure to formally state all the necessary information to perform a formal hypothesis test.  Assume $\alpha = 0.05$.
 ```{r}
 ```
 
-l. [4 pts] Calculate a prediction as well as a 90% prediction interval for the point differential when the home team has 100 more yards than the away team.  Interpret the prediction interval in the context of the given problem.
+h. [4 pts] Calculate a prediction as well as a 95% prediction interval for the sales price of a house that is 500 meters from the nearest MRT station.  Interpret the prediction interval in the context of the given problem.
+```{r}
+```
+
+i. [2 pts] Determine if the assumption of heteroscedasticity is violated.
+```{r}
+```
+
+j. [2 pts] Determine if the assumption of normally distributed residuals is violated.
+```{r}
+```
+
+6. Suppose we now wish to create a multiple linear regression model for sales price with all of the other variables in the dataset as explanatory variables.
+
+a. [5 pts] Report the least squares regression line for this linear model.
+```{r}
+```
+
+b. [3 pts] Interpret the parameter associated with the explanatory variable *MRT* in the context of the problem.
+
+c. [3 pts] Interpret the parameter associated with the explanatory variable *Age* in the context of the problem.
+
+d. [2 pts] Report the r-squared for the linear model.  Why is this value of r-squared larger than the r-squared you reported in 5(e)?
+```{r}
+```
+
+e. [3 pts] What are the error degrees of freedom and the mean squared error for this linear model?
+```{r}
+```
+
+f. [4 pts] Calculate and interpret a 90% confidence interval for a home's predicted sales price for a house that is 10 years old, 1000 meters from the nearest MRT station, has 4 convenience stores within 1 km, and is located at 24.98 degrees latitude and 121.53 degrees longitude.
 ```{r}
 ```

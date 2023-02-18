@@ -1,0 +1,122 @@
+---
+title: "STAT 308 -- Homework 4"
+---
+
+```{r setup, include=FALSE}
+knitr::opts_chunk$set(echo = TRUE, include = TRUE,
+fig.align="center",warnings = FALSE,fig.width = 5,fig.height=3)
+```
+
+For the problems in which calculations are needed, please include your \texttt{R} code with your answers, otherwise you will not be given full credit.  Please upload your assignment by Friday, February 17, 11:59 pm in an html/pdf/word file to Sakai.
+
+- 1. Suppose we perform a simple linear regression with a sample size $n = 40$ where we obtain $$\bar{x} = -0.208, \bar{y} = 1.516, s_x = 2.354, s_y = 3.185$$ $$\hat{\beta}_0 = 1.745, \hat{\beta}_1 = 1.102,s_{\hat{\beta}_0} = 0.265, s_{\hat{\beta}_1} = 0.113$$
+
+-- a. Calculate the sample correlation coefficient, $r$, and the $r^2$.
+```{r}
+beta1 <- 1.102
+sx <- 2.354
+sy <- 3.185
+r <- beta1*sx/sy
+r2 <- r^2
+r
+r2
+```
+$r = 0.8145$, $r^2 = 0.6634$
+
+-- b. Calculate the estimate of the regression variance $s^2$. (Hint: Intuitively, this is the variance of $Y$ that is not explained through the linear model with $X$.)
+```{r}
+sy2 <- sy^2
+n <- 40
+SST <- sy2*(n-1)
+SSE <- SST*(1-r2)
+s2 <- SSE/(n-2)
+s2
+```
+$s^2 = 3.505$
+
+- 2. Use the following incomplete ANOVA table to answer the following questions.
+
+|     |df    |Sums of Squares  |Mean Square  |F Value  |Pr(>f)   |
+|-----|:-----|:----------------|:------------|:--------|:--------|
+|Model|1 | 5.6             | | 3.3 |  |
+|Error||  | |         |         |
+|Total|40| |             |         |         |   
+
+-- a. What is the mean squares for the model (MSM)?
+```{r}
+df_model <- 1
+SSM <- 5.6
+MSM <- SSM/df_model
+MSM
+```
+
+$MSM = 5.6$
+
+-- b. What is the mean squared error (MSE)?
+```{r}
+f <- 3.3
+MSE <- MSM/f
+MSE
+```
+$MSE = 1.697$
+
+-- c. What are the error degrees of freedom?
+```{r}
+df_total <- 40
+df_error <- df_total - df_model
+df_error
+```
+$df_error = 39$
+
+-- d. What is the sum of squared errors (SSE)?
+```{r}
+SSE <- MSE*df_error
+SSE
+```
+$SSE = 66.18$
+
+-- e. What is the p-value used to test for a significant linear relationship between $X$ and $Y$?
+```{r}
+p <- pf(f,df1=df_model,df2=df_error,lower.tail=FALSE)
+p
+```
+$p = 0.0770$
+
+- 3. Reconsider the dataset \texttt{AdRevenue.csv} as well as our simple linear regression model of ad revenue (in millions of dollars) based on circulation (in millions).
+
+-- a. Obtain an ANOVA table for this model.  
+```{r}
+adrev <- read.csv("../Data/adrevenue.csv")
+mod <- lm(AdRevenue ~ Circulation,adrev)
+anova(mod)
+```
+
+-- b. Using the ANOVA table, perform an F test for a linear relationship between ad revenue and circulation.  Be sure to properly state your hypotheses, your test statistic, p-value, and a decision and conclusion at $\alpha = 0.05$.
+
+$$H_0: \beta_1 = 0$$
+
+$$H_a: \beta_1 \neq 0$$
+
+```{r}
+f <- anova(mod)[1,"F value"]
+p <- anova(mod)[1,"Pr(>F)"]
+f
+p
+```
+
+$F = 576.5$, $p = 6.293 \times 10^{-35}$,  $p < \alpha$, therefore we reject $H_0$ and conclude that there is a statistically significant linear relationship between ad revenue and circulation.
+
+-- c. What is the distribution the test statistic follows under $H_0$?  In other words, what is the distribution we use to calculate the p-value?
+
+$F$ is an F-distribution with 1 and 68 degrees of freedom
+
+-- d. Using the ANOVA table, calculate the value of $r^2$.  Interpret this value in the context of the problem.
+```{r}
+SSM <- anova(mod)[1,"Sum Sq"]
+SSE <- anova(mod)[2,"Sum Sq"]
+r2 <- SSM/(SSM + SSE)
+r2
+p <- anova(mod)[1,"Pr(>F)"]
+```
+89.45% of the variation in magazine's ad revenue can be explained through its linear relationship with number of magazines in circulation.
+
