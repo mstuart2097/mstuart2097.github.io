@@ -122,7 +122,7 @@ f. [4 pts] Calculate a 95% confidence interval for the slope.  Interpret this in
 ```{r}
 ```
 
-g. [5 pts] Perform a hypothesis test for a linear relationship between yard differential and point differential.  Be sure to formally state all the necessary information to perform a formal hypothesis test.  Assume $\alpha = 0.05$.
+g. [5 pts] Perform a hypothesis test for a linear relationship between distance to the nearest MRT station and home sales price.  Be sure to formally state all the necessary information to perform a formal hypothesis test.  Assume $\alpha = 0.05$.
 ```{r}
 ```
 
