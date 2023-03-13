@@ -72,7 +72,6 @@ library(regclass)
 Let's see what the VIFs are for a model where inventory is excluded from our linear model.
 
 ```{r}
-VIF(mod_red)
 ```
 
 ### Example
