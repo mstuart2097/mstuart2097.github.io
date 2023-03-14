@@ -1,0 +1,126 @@
+```{r setup, include = TRUE, echo=FALSE}
+# This line of code tells the document all the display defaults
+
+knitr::opts_chunk$set(echo = TRUE, include = TRUE, fig.align="center",warnings = FALSE,fig.width = 5,fig.height=3)
+```
+
+# Background Information
+
+We have introduced how to perform overall and partial significance of multiple linear regression using $F$ tests.  The results for the $F$ tests for multiple linear regression are only reliable if the explanatory variables $X_1$, $X_2$, $\dots$, $X_{p-1}$ are not significantly correlated.  This chapter will introduce how to determine if there is significant correlation between explanatory variables and what that means for the interpretation of our regression estimates.
+
+**Pairwise Scatter Plot** -- A plot that displays scatter plots for all the variables of a dataset, including the response variable and the explanatory variables.
+
+### Example
+
+Display pairwise scatterplots for the AllGreen dataset.  What information can you determine from the scatterplots?
+
+```{r}
+allgreen <- read.csv("../Data/allgreen.csv")
+pairs(allgreen)
+```
+- Net sales appears to be linearly related with all other explanatory variables when looking at the top row of the pairwise scatter plot.
+
+- The explanatory variables also appear to be linearly related with one another as well.
+
+**Pairwise Correlation Table** -- A table that displays correlations for all the variables of a dataset, including the response variable and the explanatory variables, so long as the explanatory variables are numeric.
+
+Display a pairwise correlation table for the AllGreen dataset.  Does this correspond with your results from the pairwise scatterplots?
+```{r}
+cor(allgreen)
+```
+
+- All of the explanatory variables appear to have a strong correlation (positive or negative) with each other.
+
+- If any of the explanatory variables are related linearly with the response variable, this is what we want to show in the multiple linear regression model:
+
+$$Y = \beta_0 + \beta_1 X_1 + \cdots + \beta_{p-1}X_{p-1} + \epsilon,$$
+where $\epsilon$ are normal random errors.
+
+- If any of the explanatory variables are related linearly with another explanatory variable, this can cause an issue of *identifiability*.
+
+- If there is an issue of identifiability, the estimates of the regression parameters ($\beta$s) are not unique.
+
+Consider the multiple linear regression model above where $X_1$ is perfectly linearly related with $X_2$,
+
+$$X_1 = \lambda_0 + \lambda_1 X_2$$
+Then, the regression model becomes
+
+$$Y = \beta_0 + \beta_1X_1 + \beta_2X_2 + \cdots + \beta_{p-1}X_{p-1} + \epsilon$$
+$$ = \beta_0 + \beta_1(\lambda_0 + \lambda_1X_2) + \beta_2X_2 + \cdots + \beta_{p-1}X_{p-1} + \epsilon$$
+
+$$ = (\beta_0 + \beta_1\lambda_0) + (\beta_1\lambda_1 + \beta_2)X_2 + \cdots + \beta_{p-1}X_{p-1} + \epsilon$$
+
+- The above model includes more parameters than are necessary, and therefore cannot be easily identified.
+
+- If a linear model is not identifiable, then there is more than one solution to the least squares method of finding estimates of the $\beta$s
+
+**Collinearity**: A phenomenon in regression modelling where two of the independent/explanatory variables in a model are correlated.
+
+**Multicollinearity**: A phenomenon in regression modelling where more than two of the independent/explanatory variables in a model are correlated.
+
+- If two explanatory variables have a correlation of -1 or 1, they are considered to be *perfectly collinear*.
+
+- If three or more explanatory variables have pairwise correlation of -1 or 1, they are considered to be *perfectly multicollinear*.
+
+- If a regression model has multicollinearity, then we may or may not be able to easily determine which explanatory variables are most significant in a model
+
+How do we determine if there is significant multicollinearity in a dataset?
+
+**Variance Inflation Factor (VIF)**: The VIF for explanatory variable $X_j$ is the ratio of the variance for a linear regression model with multiple explanatory variables against a linear regression model that only includes $X_j$. 
+
+You can say it is comparing the mean squared error of
+
+Reduced Model: $\hat{Y} = \beta_0 + \beta_jX_j$ vs.
+
+Full Model: $\hat{Y} = \beta_0 + \beta_1 X_1 + \dots + \beta_jX_j + \dots + \beta_{p-1}X_{p-1}$
+
+
+
+Mathematically, $$VIF(j) = \frac{1}{1 - r_j^2},$$ where $r_j^2$ is the r-squared for a linear model for $X_j$ with all of the other explanatory variables as covariates.  
+
+*Note*: Because $r_j^2$ is a number between 0 and 1, $VIF(j) > 1$
+
+- If $1 < VIF(j) \leq 5$, then there is no signficant evidence of multicollinearity for variable $X_j$
+
+- If $5 < VIF(j) \leq 10$, then there is moderate evidence of multicollinearity for variable $X_j$, and we should start to consider excluding $X_j$ from our linear model
+
+- If $VIF(j) > 10$, then there is significant evidence of multicollinearity for variable $X_j$, and we should definitely consider excluding $X_j$ from our linear model
+
+Let's look at the VIF values for the AllGreen data set for a linear model where we want to predict net sales using all of the other variables in the dataset as explanatory variables.
+
+*Note*: You will need to install the R package regclass in order to calculate the VIF fast!
+
+```{r}
+# Need library(regclass) to run the VIF function
+library(regclass)
+# The input for the VIF function is a linear model
+mod_full <- lm(NetSales ~ .,allgreen)
+VIF(mod_full)
+```
+- When you find explanatory variable(s) with a high VIF, only eliminate the variable with the *highest* VIF.  The other explanatory variables may then exhibit a lower VIF when one is eliminated.
+
+Let's see what the VIFs are for a model where inventory is excluded from our linear model.
+
+```{r}
+mod_red <- lm(NetSales ~ SqFt + Advertising + SizeofDist + NoofStores,allgreen)
+VIF(mod_red)
+```
+- By eliminating inventory from our linear model, we decrease the VIFs for all the other explanatory variables and lower our chances of having identifiability issues
+
+### Example
+
+The previous example showed that, for a model trying to predict net sales, Inventory has a high VIF when all of the other variables are included in the model as explanatory variables.  Perform a formal hypothesis test to determine if adding inventory to a linear model predicting net sales with all of the other variables included is statistically significant.  Is this what you expected?  Why or why not?
+
+Reduced Model: $\hat{NetSales} = \beta_0 + \beta_1SqFt + \beta_2Advertising + \beta_3SizeofDist + \beta_4NoofStores$
+
+Full Model: $\hat{NetSales} = \beta_0 + \beta_1SqFt + \beta_2Advertising + \beta_3SizeofDist + \beta_4NoofStores + \beta_5 Inventory$
+
+$$H_0: \beta_5 = 0$$
+$$H_a: \beta_5 \neq 0$$
+
+```{r}
+anova(mod_red,mod_full)
+```
+$F = 9.190$, $p = 0.006347$, we reject $H_0$ and conclude that adding inventory to a linear model for net sales that already includes square footage, advertising, size of district, and number of stores is statistically significant.
+
+- If an explanatory variable is highly multicollinear, that does not mean it is not statistically significant.
