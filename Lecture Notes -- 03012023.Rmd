@@ -1,0 +1,289 @@
+```{r setup, include = TRUE, echo=FALSE}
+# This line of code tells the document all the display defaults
+
+knitr::opts_chunk$set(echo = TRUE, include = TRUE, fig.align="center",warnings = FALSE,fig.width = 5,fig.height=3)
+```
+
+# Background Information
+
+We have introduced the concept of multiple linear regression where we introduce linearly regressing a continuous response variable $Y$ on multiple explanatory variables $X_1$, $X_2$, $\dots$, $X_{p-1}$.  This chapter will introduce how we perform hypothesis tests on these regression lines.
+
+## Test for Overall Significance of a multiple linear regression model
+
+Recall, the method for testing for a significant linear relationship in simple linear regression.
+
+Reduced Model: $\hat{Y} = \beta_0$
+
+Full Model: $\hat{Y} = \beta_0 + \beta_1X$
+
+The null and alternative hypotheses are:  $$H_0:\beta_1 = 0$$ $$H_a:\beta_1 \neq 0$$
+
+In other words, if we want to test whether or not AllGreen's net sales has a statistically significant linear relationship with its advertising spending, we are testing to see if the solid line in the below graph is significantly better at predicting $Y$, AllGreen's net sales, than the horizontal dashed line.
+
+```{r}
+allgreen <- read.csv("../data/AllGreen.csv")
+plot(NetSales ~ Advertising,allgreen)
+abline(lm(NetSales ~ Advertising,allgreen))
+abline(h=mean(allgreen$NetSales),lty=2)
+```
+
+
+
+What is this equivalent in multiple dimensions?
+
+```{r, echo=FALSE}
+# You do NOT need to run this code.  This is used only for in class visualization.
+## Estimation of the regression plane
+mod <- lm(NetSales ~ Advertising + SqFt,allgreen)
+cf.mod <- coef(mod)
+
+### Calculate z on a grid of x-y values
+x1.seq <- seq(min(allgreen$Advertising),max(allgreen$Advertising),length.out=25)
+x2.seq <- seq(min(allgreen$SqFt),max(allgreen$SqFt),length.out=25)
+z.mod <- t(outer(x1.seq, x2.seq, function(x,y) cf.mod[1]+cf.mod[2]*x+cf.mod[3]*y))
+z.same <- matrix(mean(allgreen$NetSales),nrow=25,ncol=25)
+
+#### Draw the plane with "plot_ly" and add points with "add_trace"
+library(plotly)
+plot_ly(allgreen,
+        x=~Advertising, # First explanatory variable
+        y=~SqFt, # Second explanatory variable,
+        z=~NetSales) %>% # Response variable
+  add_markers() %>%
+  add_trace(x=x1.seq, y=x2.seq, z=z.mod, type="surface",
+           colorscale = list(c(0, 1), c("blue", "blue"))) %>%
+  add_trace(x=x1.seq, y=x2.seq, z=z.same, type="surface",
+           colorscale = list(c(0, 1), c("grey", "grey"))) %>%
+  layout(scene = list(
+    aspectmode = "manual", aspectratio = list(x=1, y=1, z=1)))
+```
+
+What are the null and alternative hypotheses for testing if the non-horizontal linear plane is better at predicting than the horizontal linear plane?
+
+- Again, think of this question in terms of a reduced and a full model.
+
+Reduced Model: $\hat{NetSales} = \beta_0$
+
+Full Model: $\hat{NetSales} = \beta_0 + \beta_1Advertising + \beta_2SqFt$
+
+$$H_0: \beta_1 = \beta_2 = 0$$
+
+$$H_a: \text{Either } \beta_1 \neq 0 \text{ and/or } \beta_2 \neq 0$$
+
+In general for a total of $p-1$ explanatory variables: 
+
+$\hat{Y} = \beta_0 + \beta_1X_1 + \beta_2X_2 + \cdots + \beta_{p-1}X_{p-1}$
+
+$$H_0: \beta_1 = \beta_2 = \cdots = \beta_{p-1} = 0$$
+
+$$H_a: \text{At least one } \beta \neq 0$$
+- While this hypothesis test tells us if at least one explanatory variable is statistically significant in our linear model, it does not tell us which ones are and which ones aren't.
+
+## Test Statistic and p-value
+
+Recall the ANOVA table:
+
+|     |df    |Sums of Squares  |Mean Square  |F Value  |Pr(>f)   |
+|-----|:-----|:----------------|:------------|:--------|:--------|
+|Model|$p-1$ | $\text{SSM}$             | $\text{MSM} = \frac{\text{SSM}}{p-1}$| $F=\frac{\text{MSM}}{\text{MSE}}$ | $P(F_{df1=p-1,df2=n-p} > F)$ |
+|Error|$n-p$ | $\text{SSE}$              | $\text{MSE} = \frac{\text{SSE}}{n-p}$|         |         |
+|Total|$n-1$ | $\text{SST} = \text{SSM} + \text{SSE}$ |             |         |         |   
+
+This provides us test statistics and p-values for the test for overall significance of our linear regression model.
+
+- F-statistic: $\frac{\text{Explained Variance}}{\text{Unexplained Variance}} = \frac{\text{SSM}/(p-1)}{\text{SSE}/(n-p)}$
+
+  - $p-1$ are the degrees of freedom for the linear model ($p-1$ is also the number of explanatory variables in your model)
+  
+  - $n-p$ are the error degrees of freedom
+
+- $p-value$: Calculated using an F-distribution with $p-1$ and $n-p$ degrees of freedom
+
+### Example
+
+Perform a test for a significant linear regression for All Green's net sales with both advertising dollars and square footage as predictors. 
+
+- From above, we stated that
+
+$$H_0: \beta_1 = \beta_2 = 0$$
+$$H_a: \text{At least one } \beta \neq 0$$
+- Let's look at the ANOVA table that R creates for a multiple linear regression model
+
+```{r}
+mod_full <- lm(NetSales ~ Advertising + SqFt,allgreen)
+anova(mod_full)
+```
+- R breaks down multiple linear regression into sums of squares for each individual explanatory variable in the ANOVA table
+
+- However, summary of a linear model can tell us the proper f statistic and p-value!
+
+```{r}
+summary(mod_full)
+```
+$F = 174.4$, $p = 5.064 \times 10^{-15}$, $p < \alpha$, so we reject $H_0$ and we can conclude that a linear model that predicts AllGreen's net sales including both advertising spending and square footage of the store is statistically significant.
+
+- What is the distribution of $F$ that is used to calculate the p-value? (What is the distribution of $F$ under $H_0$?)
+
+$F$ distribution with 2 (because we have 2 explanatory variables) and 24 (df associated with the residuals in the ANOVA table) degrees of freedom.
+
+
+
+# Test for Partial Significance of a multiple linear regression model
+
+Now, suppose we know that advertising is a significant linear predictor for net sales for All Green.  Does adding square footage to our linear model significantly improve the prediction of net sales?
+
+```{r, echo=FALSE}
+# # You do NOT need to run this code.  This is used only for in class visualization.
+# ## Estimation of the regression plane
+mod <- lm(NetSales ~ Advertising + SqFt,allgreen)
+cf.mod <- coef(mod)
+mod2 <- lm(NetSales ~ Advertising,allgreen)
+cf.mod2 <- coef(mod2)
+#
+### Calculate z on a grid of x-y values
+x1.seq <- seq(min(allgreen$Advertising),max(allgreen$Advertising),length.out=25)
+x2.seq <- seq(min(allgreen$SqFt),max(allgreen$SqFt),length.out=25)
+z.mod <- t(outer(x1.seq, x2.seq, function(x,y) cf.mod[1]+cf.mod[2]*x+cf.mod[3]*y))
+z.mod2 <- t(outer(x1.seq, x2.seq, function(x,y) cf.mod2[1]+cf.mod[2]*x))
+
+#### Draw the plane with "plot_ly" and add points with "add_trace"
+library(plotly)
+plot_ly(allgreen,
+        x=~Advertising, # First explanatory variable
+        y=~SqFt, # Second explanatory variable,
+        z=~NetSales) %>% # Response variable
+  add_markers() %>%
+  add_trace(x=x1.seq, y=x2.seq, z=z.mod, type="surface",
+            colorscale = list(c(0, 1), c("blue", "blue"))) %>%
+  add_trace(x=x1.seq, y=x2.seq, z=z.mod2, type="surface",
+            colorscale = list(c(0, 1), c("grey", "grey"))) %>%
+  layout(scene = list(
+    aspectmode = "manual", aspectratio = list(x=1, y=1, z=1)))
+```
+
+- We assume that advertising is statistically significant in our linear model, so we include it in our reduced model
+
+Reduced Model: $\hat{Y} = \beta_0 + \beta_1Advertising$
+
+Full Model: $\hat{Y} = \beta_0 + \beta_1Advertising + \beta_2SqFt$
+
+$$H_0: \beta_2 = 0$$
+
+$$H_a: \beta_2 \neq 0$$
+In general, for a total of $p-1$ explanatory variables and we assume the first $k-1$ variables are already included in the model ($k < p$):
+
+Reduced Model: $\hat{Y} = \beta_0 + \beta_1 X_1 + \cdots + \beta_{k-1}X_{k-1}$
+
+Full Model: $\hat{Y} = \beta_0 + \beta_1 X_1 + \cdots + \beta_{k-1}X_{k-1} + \beta_k X_k + \cdots + \beta_{p-1} X_{p-1}$
+
+$$H_0: \beta_k = \beta_{k+1} = \cdots = \beta_{p-1} = 0$$
+
+$$H_a: \text{At least one } \beta \neq 0$$
+How do we find a test statistic and p-value?
+
+We know that, for any linear model: $\text{SST} = \text{SSM} + \text{SSE}$
+
+- For the reduced model: $\text{SST} = \text{SSM}_{reduced} + \text{SSE}_{reduced}$
+
+- For the full model: $\text{SST} = \text{SSM}_{full} + \text{SSE}_{full}$
+
+What happens to the sums of squares when we add explanatory variables from the reduced model to get the full model?
+```{r}
+mod_red <- lm(NetSales ~ Advertising,allgreen)
+mod_full <- lm(NetSales ~ Advertising + SqFt,allgreen)
+anova(mod_red)
+anova(mod_full)
+```
+
+- A portion of $\text{SSE}_{reduced}$ is taken out and added to the $\text{SSM}_{reduced}$ to get $\text{SSM}_{full}$
+
+- What we are testing is if the added value from $\text{SSM}_{reduced}$ to get the $\text{SSM}_{full}$ significantly improves the predictive ability of our model.
+
+- More formally, we want to test if the additional variance that is explained by the full model is statistically significant.
+
+- F-statistic: $\frac{\text{New Explained Variance}}{\text{Still Unexplained Variance}} = \frac{(\text{SSE}_{reduced} - \text{SSE}_{full})/(p-k)}{\text{SSE}_{full}/(n-p)}$
+
+  - $p-k$ are the **additional** degrees of freedom to the linear model (i.e. the number of parameters/$\beta$s we are adding to the reduced model to get the full model)
+  
+  - $n-p$ are the error degrees of freedom
+
+- $p-value$: Calculated using an F-distribution with $p-k$ and $n-p$ degrees of freedom
+
+### Example
+
+Formally answer the question: Does adding square footage to our linear model that already includes advertising spending significantly improve the prediction of net sales?
+
+- From above we know that
+
+$$H_0: \beta_2 = 0$$
+$$H_a: \beta_2 \neq 0$$
+
+```{r}
+# anova in R can also help us easily compare a reduced model to a full model
+anova(mod_red,mod_full)
+```
+- Res.Df column provides the error degrees of freedom for the reduced model (top line) and the full model (bottom line)
+
+- RSS (Residual Sums of Squares) column provides the sum of squared errors for the reduced model (top line) and full model (bottom line)
+
+- Df and Sum of Sq columns provide the differences of the error degrees of freedom and sum of squared errors, respectively
+
+- F and Pr(>F) provide us the appropriate test statistic and p-value for a partial significance (partial F) test
+
+$F = 37.35$, $p = 2.591 \times 10^{-6}$.  $p < 0.05$, so we reject $H_0$ and can conclude that adding square footage to our linear model that already includes advertising spending significantly improves the predictive ability of All Green's net sales.
+
+### Example
+
+Suppose now I want to test whether or not including both square footage and amount of inventory significantly improves the linear model with advertising already included.  How would I perform this?
+
+Reduced Model: $\hat{NetSales} = \beta_0 + \beta_1 Advertising$
+
+Full Model: $\hat{NetSales} = \beta_0 + \beta_1 Advertising + \beta_2 SqFt + \beta_3 Inventory$
+
+$$H_0: \beta_2 = \beta_3 = 0$$
+$$H_a: \text{At least one } \beta \neq 0$$
+
+```{r}
+mod_red <- lm(NetSales ~ Advertising, allgreen)
+mod_full <- lm(NetSales ~ Advertising + SqFt + Inventory,allgreen)
+anova(mod_red,mod_full)
+```
+$F = 25.04$, $p = 1.683 \times 10^{-6}$, $p < 0.05$, so we reject $H_0$ and can conclude adding square footage and amount of inventory to a linear model that already includes advertising spending significantly improves the predictive ability of AllGreen's net sales.
+
+### Question
+
+What is the additional percent variation in net sales of the AllGreen stores that can be explained by adding square footage to our linear model that already includes advertising spending?
+
+- Reduced Model: $\hat{NetSales} = \beta_0 + \beta_1 Advertising$
+
+- Full Model: $\hat{NetSales} = \beta_0 + \beta_1 Advertising + \beta_2 SqFt$
+
+To answer the above question, we simply need to calculate the differences in the $r^2$ values between the reduced model and the full model.
+
+```{r}
+mod_red <- lm(NetSales ~ Advertising,allgreen)
+mod_full <- lm(NetSales ~ Advertising + SqFt,allgreen)
+r2_red <- summary(mod_red)$r.squared
+r2_full <- summary(mod_full)$r.squared
+r2_full - r2_red
+```
+10.02% of the variation in AllGreen's net sales is explained by adding square footage of the store to a linear model that already includes advertising spending.
+
+Let's say we want now to add advertising spending to a linear model for net sales that already includes square footage of the store.  Would the differences in the r-squareds be the same as above or different?
+
+- They would be different because the $r^2$ for the reduced model that includes only square footage will be different than a reduced model that includes only advertising spending.
+
+```{r}
+mod_red <- lm(NetSales ~ SqFt,allgreen)
+mod_full <- lm(NetSales ~ Advertising + SqFt,allgreen)
+r2_red <- summary(mod_red)$r.squared
+r2_full <- summary(mod_full)$r.squared
+r2_full - r2_red
+```
+
+What is the additional percent variation in net sales of the AllGreen stores that can be explained by adding square footage and amount of inventory to our linear model that already includes advertising spending?
+
+- Figure out on your own
+
+
+
