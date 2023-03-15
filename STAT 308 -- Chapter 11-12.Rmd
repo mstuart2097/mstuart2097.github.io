@@ -1,0 +1,151 @@
+---
+title: "STAT 308 -- Chapter 11-12"
+---
+
+```{r setup, include = TRUE, echo=FALSE}
+# This line of code tells the document all the display defaults
+
+knitr::opts_chunk$set(echo = TRUE, include = TRUE, fig.align="center",warnings = FALSE,fig.width = 6,fig.height=5)
+```
+
+# Background Information
+
+We have introduced the concept of multiple linear regression and how we can perform hypothesis tests on the significance of adding additional explanatory variables to the predictive performance of our overall model.  Previously, we have only explored the inclusion of quantitative/numeric explanatory variables.  In these lectures, we will introduce how to include qualitative/categorical explanatory variables to our linear regression models.
+
+## Motivating Example
+
+Consider insurance.csv, a dataset containing information on personal medical costs not covered by health insurance which includes
+
+- Age: Age of primary beneficiary
+
+- Sex: Gender of insurance contractor: male/female
+
+- BMI: Body mass index (in $kg/m^2$), an understanding of body weights that are high or low relative to height
+
+- Children: Number of children covered by the health insurance contracts
+
+- Smoker: Yes/No on whether the primary beneficiary is a smoker
+
+- Region: The beneficiary's residential area in the US, northeast, southeast, southwest, northwest
+
+- Charges: Individual medical costs billed by health insurance
+
+We wish to create a linear model for the individual's personal medical costs based on a subset of the additional variables in the model.
+
+Suppose we already have knowledge that bmi is related linearly with individual medical charges.  More specifically, we have $$\hat{charges} = \beta_0 + \beta_1bmi$$
+
+```{r, message=FALSE}
+library(tidyverse)
+insurance <- read.csv("../Data/insurance.csv")
+mod <- lm(charges ~ bmi,insurance)
+insurance %>% 
+  mutate(pred_charges = mod$fitted.values) %>%
+  ggplot(aes(x=bmi,y=charges,colour=smoker)) +
+  geom_point(size=0.5) +
+  geom_line(aes(y=pred_charges),colour="black")
+```
+We wish to incorporate *smoker* into our linear model because of our belief that smokers, on average, spend more in medical bills on an annual basis.  We have not discussed how to incorporate categorical variables into linear models.
+
+```{r}
+mod2 <- lm(charges ~ bmi + smoker,insurance)
+insurance %>% 
+  mutate(pred_charges = mod$fitted.values,
+         pred_charges2 = mod2$fitted.values) %>%
+  ggplot(aes(x=bmi,y=charges,colour=smoker)) +
+  geom_point(size=0.5) +
+  geom_line(aes(y=pred_charges),colour="black") +
+  geom_line(aes(y=pred_charges2),lty=2)
+```
+
+**Indicator Variable**: A variable that takes only the value 0 or 1 to indicate the absence or presence of some categorical effect that may be expected to shift the outcome.
+
+- Adding a categorical variable with $m$ possible values will, in theory, add $m$ additional explanatory variables to our model, or we have $$\hat{Y} = \beta_0 + \beta_1^*X_1 + \beta_2^*X_2 + \cdots + \beta_m^*X_m + (\beta_{m+1}X_{m+1} + \cdots + \beta_pX_p),$$ where $X_{m+1}$ to $X_p$ are the other explanatory variables in our model.
+
+- However, there is a big issue with the above equation: it is perfectly collinear!
+
+**Baseline**: The value of a categorical variable that is omitted to ensure identifiability of the model
+
+- Thus, we will add $m-1$ new explanatory variables to our model.
+
+- We are left with a model of the form $$\hat{Y} = \beta_0 + \beta_1X_1 + \beta_2X_2 + \cdots + \beta_{m-1}X_{m-1} + (\beta_{m}X_{m} + \cdots + \beta_{p-1}X_{p-1})$$
+
+- By default, R picks the value that comes first alphabetically or numerically as the baseline.
+
+### Example
+
+Consider the linear model for predicting medical charges with both bmi and whether or not the person is a smoker as explanatory variables in our linear model.
+
+```{r}
+```
+
+- Interpret the parameter associated with smoker_yes.
+
+- Interpret the intercept of the model.
+
+- Perform a formal hypothesis test to determine if adding whether or not the person is a smoker to a linear model that already includes bmi is statistically significant.
+
+### Example
+
+Suppose that for our linear model for medical charges that already includes bmi we want to add geographic region to our linear model.  Use this new model to answer the following questions.
+
+```{r, message=FALSE}
+mod2_region <-  lm(charges ~ bmi + region,insurance)
+insurance %>% 
+  mutate(pred_charges = mod$fitted.values,
+         pred_charges2 = mod2_region$fitted.values) %>%
+  ggplot(aes(x=bmi,y=charges,colour=region)) +
+  geom_point(size=0.5) +
+  geom_line(aes(y=pred_charges),colour="black") +
+  geom_line(aes(y=pred_charges2),lty=2)
+```
+
+```{r}
+```
+
+- What is the interpretation of the parameter associated with the northwest region?
+
+- What is the interpretation of the intercept for the linear model?
+
+- Perform a formal hypothesis test to determine if adding region to a linear model that already includes bmi is statistically significant.
+
+## Motivating Example 2
+
+We have determined that including whether or not the primary beneficiary is a smoker significantly improves our predictions for medical insurance charges. 
+
+However, return to the scatterplots and our least squares regression lines individually for smokers.
+
+```{r, message=FALSE}
+insurance %>% 
+  mutate(pred_charges2 = mod2$fitted.values) %>%
+  filter(smoker=="yes") %>%
+  ggplot(aes(x=bmi,y=charges)) +
+  geom_point(size=0.5) +
+  geom_line(aes(y=pred_charges2),lty=2)
+```
+
+Why does this regression line not seem to fit the data properly?
+
+- The linear relationship between bmi and insurance charges may be **different** depending on whether or not the primary beneficiary is a smoker.
+
+**Interaction**: An effect in a linear model that quantifies the difference in a linear relationship between an one explanatory variable and the response variable when accounting for the value of another explanatory variable.
+
+```{r, message=FALSE}
+mod2_inter <- lm(charges ~ bmi*smoker,insurance)
+insurance %>% 
+  mutate(pred_charges = mod2$fitted.values,
+         pred_charges2 = mod2_inter$fitted.values) %>%
+  ggplot(aes(x=bmi,y=charges,colour=smoker)) +
+  geom_point(size=0.5) +
+  geom_line(aes(y=pred_charges),lty=2) +
+  geom_line(aes(y=pred_charges2))
+```
+
+### Example
+
+Perform a hypothesis test to determine if the linear relationship between bmi and insurance charges is different for smokers vs. non-smokers.  (This means I want you to perform an F test/hypothesis test to determine if adding an interaction term to our linear model is significant).
+
+If I ask you do perform a hypothesis for the prescence of an interaction term, this means that the variables we are multiplying together to get the interaction term are already included in our model.
+
+```{r}
+```
+
