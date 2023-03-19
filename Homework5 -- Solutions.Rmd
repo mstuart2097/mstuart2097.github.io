@@ -1,0 +1,145 @@
+```{r setup, include=FALSE}
+knitr::opts_chunk$set(echo = TRUE, include = TRUE,
+fig.align="center",warnings = FALSE,fig.width = 5,fig.height=3)
+```
+
+For the problems in which calculations are needed, please include your \texttt{R} code with your answers, otherwise you will not be given full credit.  Please upload your assignment by Friday, March 17, 11:59 pm in an html,pdf,or word file to Sakai.
+
+1. Use the below degrees of freedom and sums of squares from ANOVA tables from a multiple linear regression with three explanatory variables to answer the following questions.
+
+- Model 1: $X_1$ as only explanatory variable
+
+|     |df    |Sums of Squares  |
+|-----|:-----|:----------------|
+|Model |1 | 2560.45 |
+|Error | 58 | 251.08 |
+
+- Model 2: $X_1$ and $X_2$ as explanatory variables
+
+|     |df    |Sums of Squares  |
+|-----|:-----|:----------------|
+|Model |2 | 2733.63 |
+|Error | 57 |77.90 |
+
+- Model 3: $X_1$, $X_2$, and $X_3$ as explanatory variables
+
+|     |df    |Sums of Squares  |
+|-----|:-----|:----------------|
+|Model |3 | 2780.43 |
+|Error | 56 |31.1 |
+
+a. What are the additional model sums of squares when we add $X_2$ to a model that includes $X_1$?
+```{r}
+2733.63 - 2560.45
+```
+
+b. What is the reduction in the sum of squared errors when we add $X_2$ and $X_3$ to a model that includes $X_1$?
+```{r}
+251.08 - 31.1
+```
+
+c. What is the mean squared error for the linear model with $X_1$, $X_2$, and $X_3$ as explanatory variables?
+```{r}
+31.1/56
+```
+
+d. Find an F statistic and p-value for testing for overall significance of the linear model with $X_1$, $X_2$, and $X_3$ as explanatory variables.
+```{r}
+f <- (2780.43/3)/(31.1/56)
+f
+p <- pf(f,df1=3,df2=56,lower.tail=FALSE)
+p
+```
+
+e. Find an F stastistic and p-value for testing if adding $X_2$ and $X_3$ to a linear model that already includes $X_1$ is statistically significant.
+```{r}
+SSE_red <- 251.08
+SSE_full <- 31.1
+df_red <- 58
+df_full <- 56
+f <- (SSE_red-SSE_full)/(df_red - df_full)/(SSE_full/df_full)
+f
+p <- pf(f,df1=df_red-df_full,df2=df_full,lower.tail=FALSE)
+```
+
+2. Consider the dataset \texttt{economy.csv} which contains the following variables:
+
+- \texttt{CRUDE}: dollars per barrel of crude oil
+- \texttt{INTEREST}: interest on ten-year treasury notes
+- \texttt{FOREIGN}: foreign investments in billions of dollars
+- \texttt{DJIA}: Dow Jones industrial average
+- \texttt{GNP}: Gross national product in billions of dollars
+- \texttt{PURCHASE}: Purchasing power of U.S. dollar (in 1983 dollars)
+- \texttt{CONSUMER}: Consumer debt in billions of dollars
+
+a. Suppose we create a linear model with crude oil in dollars per barrel as the response variable and all of the other variables in the dataset as the explanatory variables.  Perform an overall F test to determine if this overall linear model is statistically significant.  Be sure to include all necessary information to perform a hypothesis test.  Assume $\alpha = 0.05$.
+
+- Reduced Model: $\hat{crude} = \beta_0$
+
+- Full Model: $\hat{crude} = \beta_0 + \beta_1interest + \beta_2foreign + \beta_3 djia + \beta_4 gnp + \beta_5 purchase + \beta_6 consumer$
+
+$$H_0: \beta_1 = \cdots = \beta_6 = 0$$
+$$H_a: \text{At least one } \beta \neq 0$$
+
+```{r}
+economy <- read.csv("../data/economy.csv")
+mod <- lm(CRUDE ~ .,economy)
+summary(mod)
+```
+$F = 31.5$, $p = 0.0008089$, we reject $H_0$ and conclude that a linear model for predicting crude oil prices that includes interest rates, foreign investments, the DJIA index, GNP, purchasing power of the dollar and consumer debt is statistically significant.
+
+b. Check if the assumptions of homoscedasticity and normally distributed residuals are violated for the model in (a).
+
+```{r}
+plot(mod,1)
+plot(mod,2)
+```
+
+- The residual plot looks relatively evenly spread for all of the fitted values, and the points in the QQ plot fall close to the 45 degree line, so the assumptions of homoskedasticity and normally distributed residuals are not violated.
+
+c.  Suppose we know that dollars per barrel is related linearly with interest rates.
+
+(i).  Report and interpret the $r^2$ value for the linear model for dollars per barrel with interest rate as the only explanatory variable.
+```{r}
+mod_red <- lm(CRUDE ~ INTEREST,economy)
+summary(mod_red)$r.squared
+```
+$0.9397$.  93.97\% of the variation in crude oil prices can be explained through its linear relationship with interest rates.
+
+(ii). Perform a hypothesis test to determine if adding purchasing power of the U.S. dollar to our linear model significantly improves the predictive ability of our model.  Be sure to include all necessary information to perform a hypothesis test.  Assume $\alpha = 0.05$.
+
+- Reduced model: $\hat{crude} = \beta_0 + \beta_1 interest$
+
+- Full model: $\hat{crude} = \beta_0 + \beta_1 interest + \beta_2 purchase$
+
+$$H_0: \beta_2 = 0$$
+
+$$H_a: \beta_2 \neq 0$$
+```{r}
+mod_full <- lm(CRUDE ~ INTEREST + PURCHASE,economy)
+anova(mod_red,mod_full)
+```
+$F = 7.8916$, $p = 0.0204 < 0.05$.  We reject $H_0$ and conclude that adding purchasing power of the U.S. dollar to a linear model predicting crude oil prices that already includes interest rates is statistically significant.
+
+
+(iii). What is the additional percent variation in crude oil dollars per barrel than can be explained by adding purchasing power of U.S. dollar to our model to our linear model that already includes interest rates (Hint: this is the difference in the $r^2$s of the two models). 
+```{r}
+summary(mod_full)$r.squared - summary(mod_red)$r.squared
+```
+2.817\%
+
+(iv). Perform a hypothesis test to determine if adding both purchasing power of the U.S. dollar and Dow Jones Industrial Average to our linear model that already includes interest rates significantly improves the predictive ability of our model.  Be sure to include all necessary information to perform a hypothesis test.  Assume $\alpha = 0.05$.
+
+- Reduced model: $\hat{crude} = \beta_0 + \beta_1 interest$
+
+- Full model: $\hat{crude} = \beta_0 + \beta_1 interest + \beta_2 purchase + \beta_3 djia$
+
+$$H_0: \beta_2 = \beta_3 = 0$$
+
+$$H_a: \text{At least one }\beta \neq 0$$
+
+```{r}
+mod_full <- lm(CRUDE ~ INTEREST + PURCHASE + DJIA,economy)
+anova(mod_red,mod_full)
+```
+$F = 3.5077$, $p = 0.08058 > 0.05$.  We fail to reject $H_0$ and conclude that adding purchasing power of the US dollar and DJIA to a linear model predicting crude oil prices that already includes interest rates is not statistically significant.
