@@ -1,0 +1,287 @@
+---
+title: "STAT 308 -- Take Home Exam"
+---
+
+```{r setup, include=FALSE}
+knitr::opts_chunk$set(echo = TRUE, include = TRUE,
+fig.align="center",warnings = FALSE,fig.width = 5,fig.height=3)
+```
+
+This take home exam is worth a total of 100 points.  For the problems in which calculations are needed, please include your *R* code with your answers.  Turn in this exam to Sakai by Friday, February 24 at **3:35 pm**.
+
+1.  The following questions will test your basic *R* skills.
+
+a. [4 pts] Construct a vector of the numbers 0,4,3,6,1,6,2,4,1,8,9,5.  Calculate the mean, median, and variance of the vector of numbers.
+```{r}
+x <- c(0,4,3,6,1,6,2,4,1,8,9,5)
+mean(x)
+median(x)
+var(x)
+```
+- $\text{mean}(x) = 4.08333$, $\text{median}(x) = 4$, $\text{var}(x) = 8.08333$
+
+b. [2 pts] Suppose $X \sim \mathcal{N}(2,3)$.  Calculate $P(X > 4)$.
+```{r}
+pnorm(4,mean=2,sd=3,lower.tail=FALSE)
+```
+- $P(X > 4) = 0.2525$
+
+c. [2 pts] Suppose $X \sim t_{df=9}$.  Calculate the $80^{th}$ percentile of $X$.
+```{r}
+qt(0.8,df=9)
+```
+- $x = 0.8834$
+
+d. [2 pts] Suppose $X \sim F_{df1=2,df2=12}$.  Calculate $P(X < 2)$.
+```{r}
+pf(2,df1=2,df2=12)
+```
+- $P(X < 2) = 0.8220$
+
+2.  For a random sample of $n = 50$, we obtain the following sample statistics:
+$$\bar{x} = 4, \bar{y} = 7, s_x = 1.3, s_y = 2.9, r = 0.8.$$
+
+a. [4 pts] What is the estimate of the least squares regression line?
+```{r}
+n <- 50
+xbar <- 4
+ybar <- 7
+s_x <- 1.3
+s_y <- 2.9
+r <- 0.8
+beta1 <- r*s_y/s_x
+beta0 <- ybar - beta1*xbar
+beta1
+beta0
+```
+- $\hat{Y} = -0.1384 + 1.785X$
+
+b. [2 pts] What is the percent variation in $Y$ that can be explained by its linear relationship with $X$?
+```{r}
+r2 <- r^2
+r2
+```
+- $r^2 = 0.64$, 64%
+
+c. [4 pts] What are the sum of squared errors for the linear model of $Y$ with $X$ as an explanatory variable?
+```{r}
+SST <- s_y^2*(n-1)
+SSE <- SST*(1-r2)
+SSE
+```
+- $\text{SSE} = 148.35$
+
+d. [3 pts] What are the mean squares for the model?
+```{r}
+SSM <- SST - SSE
+MSM <- SSM/1
+MSM
+```
+- $\text{MSM} = 263.74$
+
+e. [3 pts] What is the estimate of the regression variance?
+```{r}
+s2 <- MSE <- SSE/(n-2)
+s2
+```
+- $s^2 = 3.091$
+
+f. [2 pts] Calculate an appropriate test statistic in a hypothesis test for a significant linear relationship between $X$ and $Y$.
+```{r}
+f <- MSM/MSE
+f
+```
+- $F = 85.33$
+
+g. [2 pts] What is the distribution of the test statistic in (f) under $H_0$?
+
+- $F$ follows an $F$ distribution with 1 and $n-2 = 48$ degrees of freedom.
+
+3. Consider the following incomplete ANOVA table for a simple linear regression model.
+
+|     |df    |Sums of Squares  |Mean Square  |F Value  |Pr(>f)   |
+|-----|:-----|:----------------|:------------|:--------|:--------|
+|Model|1 |              | | 32.7 |  |
+|Error||  | 48.2 |         |         |
+|Total|59|  |             |         |         |  
+
+a. [2 pt] What are the error degrees of freedom?
+```{r}
+df_total <- 59
+df_model <- 1
+df_error <- df_total - df_model
+df_error
+```
+- $df_{error} = 58$
+
+b. [3 pts] What are the sums of squares for the model and the sum of squared errors?
+```{r}
+f <- 32.7
+MSE <- 48.2
+MSM <- f*MSE
+SSM <- MSM*df_model
+SSE <- MSE*df_error
+SSM
+SSE
+```
+- $\text{SSM} = 1576.1$, $\text{SSE} = 2795.6$
+
+c. [3 pts] What is the p-value used to test for a significant linear relationship between $X$ and $Y$?
+```{r}
+pf(f,df1=df_model,df2=df_error,lower.tail=FALSE)
+```
+- $p = 3.951 \times 10 ^{-7}$
+
+d. [2 pts] What is the sample variance of $Y$ ($s_y^2$)?
+```{r}
+SST <- SSM + SSE
+sy2 <- SST/df_total
+sy2
+```
+- $s_y^2 = 74.10$
+
+e. [2 pts] What is the r-squared for the simple linear regression model?
+```{r}
+r2 <- SSM/SST
+r2
+```
+
+- $r^2 = 0.3605$, 36.05%
+
+f. [3 pts] If I were to construct a 95% confidence interval for the slope, $\beta_1$, would 0 be inside the interval?  Briefly explain your answer.
+
+- Based on the p-value from answer (c), we would conclude that there is a statistically significant linear relationship between $X$ and $Y$.  Therefore, we can equivalently say that a 95% confidence interval for the population slope would not contain zero.
+
+4.  Suppose I create a simple linear regression model for a particular dataset.  From there, I calculate 95% confidence and prediction intervals for the value of $Y$ when $X = 4.2$ and when $X = 3.5$ (the sample mean of $X$).  The four intervals are (70.19,71.60), (80.81,82.70), (59.23,82.56), and (70.07,93.44).
+
+a. [2 pts] Which of the four intervals is the 95% confidence interval for $\hat{Y}$ when $X = 4.2$?
+
+- (80.81,82.70)
+
+b. [2 pts] Which of the four intervals is the 95% prediction interval for $\hat{Y}$ when $X = 4.2$?
+
+- (59.23,82.56)
+
+c. [1 pt] Which of the four intervals is the 95% prediction interval for $\hat{Y}$ when $X = 3.5$?
+
+- (70.07,93.44)
+
+The dataset *realestate.csv* contains information on a sample of 414 houses that were recently sold in New Taipei City, Taiwan.  The variables listed are
+
+- *Age*: The age of the house in years
+
+- *MRT*: The distance (in meters) to the nearest MRT (public transportation) station
+
+- *Convenience*: The number of convenience stores within 1 kilometer of the house
+
+- *Latitude*: The degrees latitude of the location of the house
+
+- *Longitude*: The degrees longitude of the location of the house
+
+- *Price*: The house's sales price (in millions of New Taiwan dollars).
+
+5. Suppose we wish to create a model to predict the house's sales price using the distance to the nearest MRT station as an explanatory variable.
+
+a. [2 pts] Create a scatterplot of the house's sales price against distance to the nearest MRT station.  Comment on the validity of a linear relationship.
+```{r}
+house <- read.csv("../Data/realestate.csv")
+plot(Price ~ MRT, house)
+```
+
+- There appears to be a slight curvature in the plot, so perhaps a linear model may not be the best fit.
+
+b. [3 pts] Calculate a least squares regression line using *R*.  Formally state the regression line.
+```{r}
+mod <- lm(Price ~ MRT,house)
+summary(mod)
+```
+- $\hat{Price} = 45.85 - 0.007262 MRT$
+
+c. [3 pts] Interpret the estimate of the slope in the context of the problem.
+
+- For every 1 meter in distance to the nearest MRT station, the predicted sales price of the house decreases by 7262 New Taiwan dollars.
+
+d. [3 pts] Interpret the estimate of the intercept in the context of the problem.  Does this interpretation make sense?  Why or why not?
+
+- The predicted sales price of a house that is 0 meters from the nearest MRT station is 45,851,427 New Taiwan dollars.  This prediction does not make sense because a house would not be built at an MRT station.
+
+e. [2 pts] Report and interpret the r-squared in the context of the problem.
+```{r}
+summary(mod)$r.squared
+```
+- 45.38% of the variation in home sales price in New Taipei City can be explained through its linear relationship with distance to the nearest MRT station.
+
+f. [4 pts] Calculate a 95% confidence interval for the slope.  Interpret this interval in the context of the problem.
+```{r}
+confint(mod)
+```
+- (-0.008034,-0.006490) For every 1 meter in distance to the nearest MRT station, the predicted sales price of the house decreases by between 6490 and 8034 New Taiwan dollars.
+
+g. [5 pts] Perform a hypothesis test for a linear relationship between distance to the nearest MRT station and home sales price.  Be sure to formally state all the necessary information to perform a formal hypothesis test.  Assume $\alpha = 0.05$.
+
+- Reduced Model: $\hat{Price} = \beta_0$
+
+- Full Model: $\hat{Price} = \beta_0 + \beta_1 MRT$
+
+$$H_0: \beta_1 = 0$$
+
+$$H_a: \beta_1 \neq 0$$
+- From the linear model summary, $t = -18.5$ and $p < 2.2 \times 10^{-16}$.  Therefore, we reject $H_0$ and conclude there is a statistically significant linear relationship between distance to the nearest MRT station and home sales price.
+
+h. [4 pts] Calculate a prediction as well as a 95% prediction interval for the sales price of a house that is 500 meters from the nearest MRT station.  Interpret the prediction interval in the context of the given problem.
+```{r}
+newdata <- data.frame(MRT = 500)
+predict(mod,newdata,interval="prediction")
+```
+- When the distance to the nearest MRT station is 500 meters, the predicted sales price of the house is 45,847,800 New Taiwan dollars and we are 95% confident that a randomly selected house in New Taipei City sells for 22,399,270 and 62,041,530 New Taiwan dollars.
+
+i. [2 pts] Determine if the assumption of heteroscedasticity is violated.
+```{r}
+plot(mod,1)
+```
+
+- The points appear to become more spread out as the predicted values increase, meaning that the assumption of homoskedasticity appears to be violated.
+
+j. [2 pts] Determine if the assumption of normally distributed residuals is violated.
+```{r}
+plot(mod,2)
+```
+- All of the points between -2 and 2 appear to fall close to the straight line, meaning the assumption of normally distributed residuals does not appear to be violated.
+
+6. Suppose we now wish to create a multiple linear regression model for sales price with all of the other variables in the dataset as explanatory variables.
+
+a. [5 pts] Report the least squares regression line for this linear model.
+```{r}
+mod <- lm(Price ~ .,house)
+summary(mod)
+```
+- $\hat{Price} = -4946 - 0.2689Age - 0.004259MRT + 1.163 Conv + 237.8Latitude - 7.805 Longitude$
+
+b. [3 pts] Interpret the parameter associated with the explanatory variable *MRT* in the context of the problem.
+
+- Holding all other variables constant, for every 1 meter in distance to the nearest MRT station, the predicted sales price for a house in New Taiwan City decreases by 4259 New Taiwan dollars.
+
+c. [3 pts] Interpret the parameter associated with the explanatory variable *Age* in the context of the problem.
+
+- Holding all other variables constant, for every year in age of the house, the predicted sales price for a house in New Taiwan City decreases by 268,900 New Taiwan dollars.
+
+d. [2 pts] Report the r-squared for the linear model.  Why is this value of r-squared larger than the r-squared you reported in 5(e)?
+```{r}
+summary(mod)$r.squared
+```
+- $57.12\%$. When we add additional explanatory variables to our linear model, the $r^2$ value will always increase.
+
+e. [3 pts] What are the error degrees of freedom and the mean squared error for this linear model?
+
+```{r}
+summary(mod)$f["dendf"]
+summary(mod)$s^2
+```
+$df_{error} = 408$, $\text{MSE} = 80.37$
+
+f. [4 pts] Calculate and interpret a 90% confidence interval for a home's predicted sales price for a house that is 10 years old, 1000 meters from the nearest MRT station, has 4 convenience stores within 1 km, and is located at 24.98 degrees latitude and 121.53 degrees longitude.
+```{r}
+newdata <- data.frame(Age = 10,MRT = 1000,Convenience = 4,Latitude = 24.98, Longitude = 121.53)
+predict(mod,newdata,interval = "confidence",level=0.9)
+```
+- We are 90% confident that the average sales price for all homes in New Taipei City that are 10 years old, 1000 meters from the nearest MRT station, has 4 convenience stores within 1 km, and are located at 24.98 degrees latitude and 121.53 degrees longitude is between 41,707,800 and 44,165,140 New Taiwan dollars.

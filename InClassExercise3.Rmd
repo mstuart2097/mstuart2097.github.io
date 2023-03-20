@@ -1,0 +1,78 @@
+
+```{r setup, include=FALSE}
+knitr::opts_chunk$set(echo = TRUE, include = TRUE,
+fig.align="center",warnings = FALSE,fig.width = 5,fig.height=3)
+```
+
+1. Consider cirrhosis.csv, a dataset containing information on death rates from cirrhosis with the following variables.
+
+- Urban: The size of the urban population
+
+- Births: The inverse percentage of births to women between ages of 45 and 49
+
+- Wine: The consumption of wine per capita (in litres)
+
+- Liquor: The consumption of hard liquor per capita (in litres)
+
+- Cirrhosis: The death rate by cirrhosis (per 1000 people)
+
+Consider a model that predicts the death rate by cirrhosis with all of the other four variables as covariates.
+```{r}
+```
+
+a. What happens to the predicted death rate of cirrhosis when hard liquor consumption per capita increases by 1 liter, holding all other variables constant?
+
+b. What happens to the predicted death rate of cirrhosis when wine consumption per capita decreases by 2 liters, holding all other variables constant?
+
+c. Interpret the $r^2$ for this model in the context of the problem.
+
+d. Create paired scatterplots for the dataset.  Briefly explain what you see in the plots.
+
+e. Is there a potential issue of multicollinearity for this model? Briefly explain.
+
+f. Now, create a model predicting cirrhosis death rate with the covariate with the highest VIF removed.  Determine if this explanatory variable is statistically significant when the other 3 explanatory variables are already included in the model.  Assume $\alpha = 0.05$
+
+2. Consider the carsales.csv dataset which contains the following variables:
+
+- year: the year the car was made
+
+- selling_price: the amount the car was sold for
+
+- km_driven: the number of kilometers on the odometer
+
+- fuel: the type of fuel used
+
+- seller_type: whether or not the individual bought the car from another individual or from a dealership
+
+- transmission: the transmission type
+
+- owner: ordinal variable describing the number of people who have owned the car
+
+Consider a model that predicts the car's selling price based on number of kilometers driven, the transmission type, and an interaction term between the two.
+
+a. Interpret the parameter associated with the variable transmissionmanual in the context of the problem.
+```{r}
+```
+
+b. Interpret the parameter associated with the interaction term in the context of the problem.
+```{r}
+```
+
+c. Perform a formal hypothesis test to determine if the linear relationship between kilometers driven and sales price is different for the different transmission types.  Assume $\alpha = 0.05$.
+```{r}
+```
+
+d. Perform a formal hypothesis test to determine if adding fuel type or number of owners to the linear model with kilometers driven, the transmission type, and an interaction term between the two is statistically significant.  What are the degrees of freedom for the model and the error in this hypothesis test?
+```{r}
+```
+e. What percent of variation in car sales price can be explained by adding fuel type and number of owner to our linear model from the beginning of the problem?
+```{r}
+```
+
+f. If I were to add interaction terms between kilometers driven and number of owners to the model, how many explanatory variables would be added to the model?
+
+g. Determine if the assumptions of homoskedasticity and normally distributed residuals are violated.
+```{r}
+```
+
+
