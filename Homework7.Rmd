@@ -1,0 +1,56 @@
+
+```{r setup, include=FALSE}
+knitr::opts_chunk$set(echo = TRUE, include = TRUE,
+fig.align="center",warnings = FALSE,fig.width = 5,fig.height=3)
+```
+
+For the problems in which calculations are needed, please include your *R* code with your answers, otherwise you will not be given full credit.  Please upload your assignment by Friday March 31, 11:59 pm in a pdf file to Sakai.
+
+This homework is meant to help you understand the interpretation behind the parameter estimates for categorical variables in linear regression.  For this homework, you will use the *predict* function to obtain predictions from our linear model. 
+
+Consider the sleep study dataset uploaded to the course webpage, which contains information on a study where 18 students were deprived of sleep over 10 days, and their reaction times (in ms) to a particular stimulus were recorded.  The dataset contains the following variables
+
+- Reaction: The reaction time (in milliseconds)
+
+- Days: Number of days which the subject was sleep deprived
+
+- Subject: Numeric ID of the subject being tested
+
+1.  Suppose we know that reaction time is related linearly with the number of days which the subject was sleep deprived.  We wish to add the subject as a categorical variable into our linear model.
+
+```{r}
+sleep <- read.csv("../data/sleepstudy.csv")
+sleep$Subject <- as.character(sleep$Subject)
+```
+
+a. What do we predict the reaction time to be for Subject 308 after 3 days of sleep deprivation? 
+
+b. What do we predict the reaction time to be for Subject 310 after 3 days of sleep deprivation?
+
+c. Compare the difference between your answers to (a) and (b) with the parameter associated with the indicator variable Subject310.
+
+d. Does this relationship hold for any number of days of sleep deprivation?
+
+e. Based on your answers to (c)-(d), how can we interpret the value of the parameter associated with the indicator variable Subject310?
+
+f. What is the interpretation of the value of the parameter associated with the indicator variable Subject350?
+
+2. Now, suppose we wish to add an interaction term between subject and number of days of sleep deprivation to our linear model.
+
+a. What do we predict the reaction time to be for Subject 308 after 0 days of sleep deprivation?
+
+b. What do we predict the reaction time to be for Subject 310 after 0 days of sleep deprivation?
+
+c. Compare the difference between your answers to (a) and (b) with the parameter associated with the indicator variable Subject310.
+
+d. Based on your answer to (c), how can we interpret the value of the parameter associated with the indicator variable Subject310?
+
+e. What do we predict the increase in reaction time to be for Subject 308 going from 0 to 1 day of sleep deprivation?
+
+f. What do we predict the increase in reaction time to be for Subject 310 going from 0 to 1 day of sleep deprivation?
+
+g. Compare the difference between your answers to (e) and (f) with the parameter associated with the interaction between the indicator variable Subject310 and Days of sleep deprivation.
+
+h. Does this relationship hold for going from 3 to 4 days of sleep deprivation?  Or 7 to 8 days of sleep deprivation?
+
+i. Based on your answers to (g) - (h), how can we interpret the value of the parameter associated with the interaction between the indicator variable Subject310 and Days of sleep deprivation?

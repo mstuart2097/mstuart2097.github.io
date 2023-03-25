@@ -1,0 +1,134 @@
+
+```{r setup, include=FALSE}
+knitr::opts_chunk$set(echo = TRUE, include = TRUE,
+fig.align="center",warnings = FALSE,fig.width = 5,fig.height=3)
+```
+
+For the problems in which calculations are needed, please include your \texttt{R} code with your answers, otherwise you will not be given full credit.  Please upload your assignment by Friday, March 24 in a pdf/html/word file to Sakai.
+
+1. For each of the following studies/experiments, determine what the degrees of freedom for the model and error would be for performing an F test for statistic significance.  Also, for each categorical variable, what would R create as the baseline value?
+
+(a).  We wish to determine if the average GPA of Loyola students is different between the four different grades (freshman, sophomore, junior, senior).  We sample a total of 50 students in each grade, i.e. 200 total students, record their GPA, and perform an F test for differences in the mean GPA between the grades.
+
+- Model df = p - 1 = No. of Categories - 1 = 4 - 1 = 3
+
+- Error df = n - p = Sample Size - No. of Categories = 200 - 4 = 196
+
+- Baseline = "First Alphabetically" = Freshman
+
+(b).  In an experiment, 50 randomly selected overweight adults in the same geographic area are randomly assigned either a weight loss drug or a placebo (coded as placebo or weightlossdrug).  After 6 weeks, we record the amount of weight each adult lost and perform and F test for a difference in the average weight loss between the adults who received the drug and those who received the placebo.
+
+- Model df = p - 1 = 2 - 1 = 1
+
+- Error df = n - p = 50 - 2 = 48
+
+- Baseline = "placebo"
+
+(c).  The United States is divided into 5 unique regions: northeast, southeast, midwest, southwest, and west.  We randomly sample 1000 households in each region (5000 total households), and wish to perform an F test to determine if the average household income is different between the 5 regions.
+
+- Model df = p - 1 = 5 - 1 = 4
+
+- Error df = n - p = 1000 - 5 = 995
+
+- Baseline = "midwest"
+
+(d).  In a school experiment, students apply three different types of fertilizer to 12 total potted plants (coded as FertA, FertB, FertC).  After 1 week, the students measure the growth of the plant and determine if there is a difference between the mean plant growth between the three different types of fertilizer.
+
+- Model df = p - 1 = 3 - 1 = 2
+
+- Error df = n - p = 12 - 3 = 9
+
+- Baseline = "FertA"
+
+2. Consider the dataset \texttt{ToothGrowth} available in base \texttt{R}, a dataset based on a study on the length of odontoblasts (cells repsonsible for tooth growth) in 60 guinea pigs.  Each guinea pig received either 0.5, 1, or 2 mg/day of Vitamin C by either orange juice (OJ) or absorbic acid (VC).   The dataset contains the following three variables:
+
+- \texttt{len}: The numeric length of the tooth
+
+- \texttt{supp}: The Vitamin C supplement type (either VC or OJ)
+
+- \texttt{dose}: The dosage in mg/day
+
+Use this dataset to answer the following questions:
+
+a.  Fit a linear model for length of the teeth by dosage of the amount of Vitamin C the guinea pigs are receiving.   Perform a formal hypothesis test to determine if there is a linear relationship between Vitamin C dosage and tooth length.  Assume $\alpha = 0.05$.
+
+```{r}
+mod_full <- lm(len ~ dose,ToothGrowth)
+summary(mod_full)
+```
+$\hat{Len} = 7.423 + 9.764dose$
+
+- Reduced Model: $\hat{Len} = \beta_0$
+
+- Full Model: $\hat{Len} = \beta_0 + \beta_1dose$
+
+$$H_0: \beta_1 = 0$$
+$$H_a: \beta_1 \neq 0$$
+$F = 105.1$, $p = 1.233 \times 10^{-14}$, so we reject $H_0$ and conclude that there is a significant linear relationship between guinea pigs tooth length and the dosage of Vitamin C they receive.
+
+
+b. Now, suppose the experimentors wish to know if adding the Vitamin C supplement to our linear model significantly improves of the predictive ability of tooth length.
+
+(i).  Provide least squares regression lines from this linear model for each of the two Vitamin C supplement types.
+
+```{r}
+mod_full <- lm(len ~ dose + supp,ToothGrowth)
+summary(mod_full)
+```
+For Vitamin C Supplement: $\hat{Len} = 9.273 + 9.764Dose - 3.700$
+
+For Orange Juice: $\hat{Len} = 9.273 + 9.764Dose$
+
+(ii). What is the baseline value for supplement type that \texttt{R} creates?
+
+- Orange Juice
+
+(iii).  Interpret the value of the parameter associated with the indicator variable added to our model in the context of the problem. (Hint: Think of what the interpretation of the intercepts for the linear models in (i) are.)
+
+- The predicted tooth length for a guinea pig who receives a vitamin C supplement is 3.7 cm lower than a guinea pig who received orange juice, holding dosage constant.
+
+(iv).  Perform an formal F test to determine if adding Vitamin C supplement to our linear model significantly improves of the predictive ability of tooth length.  Make sure it is clear which parameter in the model you are testing for.  Assume $\alpha = 0.05$.
+
+- Reduced Model: $\hat{Len} = \beta_0 + \beta_1 Dose$
+
+- Full Model: $\hat{Len} = \beta_0 + \beta_1 Dose + \beta_2SuppVC$
+
+$$H_0: \beta_2 = 0$$
+$$H_a: \beta_2 \neq 0$$
+
+```{r}
+mod_red <- lm(len ~ dose,ToothGrowth)
+anova(mod_red,mod_full)
+```
+$F = 11.45$, $p = 0.001301 < \alpha$, we reject $H_0$ and conclude that adding vitamin C type to a model that already includes dosage significantly improves the predictions for tooth length in guinea pigs.
+
+c.  Now, suppose we believe that the linear relationship between dosage and tooth length is different for the two different supplement types.  In other words, we wish to add an interaction term for dosage and supplement type to our model.
+
+(i).  Provide least squares regression lines from this linear model for each of the two Vitamin C supplement types.
+
+```{r}
+mod_full <- lm(len ~ dose*supp,ToothGrowth)
+summary(mod_full)
+```
+For Vitamin C Supplement: $\hat{Len} = 11.55 - 8.255 + (7.811 + 3.904)Dose$
+
+For Orange Juice: $\hat{Len} = 11.55 + 7.811Dose$
+
+(ii).  Interpret the value of the parameter associated with the interaction term in our model in the context of the problem.
+
+- For every one mg increase in the dosage of Vitamin C, the predicted tooth length for guinea pigs who received the vitamin C supplement is 3.904 cm longer than those who received orange juice.
+
+(iii).  Perform an formal F test to determine if the linear relationship between dosage and tooth length is different between the two different supplement types.  Assume $\alpha = 0.05$.
+
+- Reduced Model: $\hat{Len} = \beta_0 + \beta_1 Dose + \beta_2SuppVC$
+
+- Full Model: $\hat{Len} = \beta_0 + \beta_1 Dose + \beta_2SuppVC + \beta_3Dose\times SuppVC$
+
+$$H_0: \beta_3 = 0$$
+$$H_0: \beta_3 \neq 0$$
+
+```{r}
+mod_red <- lm(len ~ dose + supp,ToothGrowth)
+anova(mod_red,mod_full)
+```
+$F = 5.334$, $p = 0.02463 < \alpha$, we reject $H_0$ and conclude that the linear relationship between Vitamin C dosage and tooth length in guinea pigs is significantly different between the two Vitamin C types.
