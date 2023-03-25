@@ -1,0 +1,147 @@
+
+```{r setup, include=FALSE}
+knitr::opts_chunk$set(echo = TRUE, include = TRUE,
+fig.align="center",warnings = FALSE,fig.width = 5,fig.height=3)
+```
+
+1. Consider cirrhosis.csv, a dataset containing information on death rates from cirrhosis with the following variables.
+
+- Urban: The size of the urban population
+
+- Births: The inverse percentage of births to women between ages of 45 and 49
+
+- Wine: The consumption of wine per capita (in litres)
+
+- Liquor: The consumption of hard liquor per capita (in litres)
+
+- Cirrhosis: The death rate by cirrhosis (per 1000 people)
+
+Consider a model that predicts the death rate by cirrhosis with all of the other four variables as covariates (explanatory variables).
+```{r}
+cirrhosis <- read.csv("../data/cirrhosis.csv")
+mod_full <- lm(Cirrhosis ~ .,cirrhosis)
+summary(mod_full)
+```
+- $\hat{Cirrhosis} = -13.96 + 0.09829 Urban + 1.148 Births + 1.858 Wine + 0.04817 Liquor$
+
+a. What happens to the predicted death rate of cirrhosis when hard liquor consumption per capita increases by 1 liter, holding all other variables constant?
+
+(This is simply asking for the value of the parameter associated with Liquor).  The predicted death rate increases by 0.04817 deaths per 1000 people.
+
+b. What happens to the predicted death rate of cirrhosis when wine consumption per capita decreases by 2 liters, holding all other variables constant?
+(Multiply the parameter associated with wine by -2).  The predicted death rate decreases by 1.858*2 = 3.716 deaths per 1000 people.
+
+c. Interpret the $r^2$ for this model in the context of the problem.
+```{r}
+summary(mod_full)$r.squared
+```
+81.36\% of the variation in cirrhosis death rate can be explained through a linear model with urban population, inverse birth rate for women ages 45-49, wine consumption, and hard liquor consumption included as explanatory variables in our model.
+
+d. Create paired scatterplots for the dataset.  Briefly explain what you see in the plots.
+```{r}
+pairs(cirrhosis)
+# This is a way to plot only the explanatory variables to look at multicollinearity
+pairs(cirrhosis[,-5]) # Eliminating the 5th column in dataset (Cirrhosis)
+```
+
+e. Is there a potential issue of multicollinearity for this model? Briefly explain.
+```{r}
+library(regclass)
+VIF(mod_full)
+```
+- Potentially yes, the relationship between urban and births seems to be significantly linear.  Also, urban and births have a VIF above 5, meaning we should look into those values more.
+
+f. Now, create a model predicting cirrhosis death rate with the covariate with the highest VIF removed.  Determine if this explanatory variable is statistically significant when the other 3 explanatory variables are already included in the model.  Assume $\alpha = 0.05$.
+```{r}
+mod_red <- lm(Cirrhosis ~ Urban + Wine + Liquor,cirrhosis)
+anova(mod_red,mod_full)
+VIF(mod_red)
+```
+- $p > \alpha$, which means that there is not statistically significant evidence that birth rate should be included in our model when urban population, wine consumption, and hard liquor consumption are already included.  Also, the VIFs for the other variables are now below 5, so multicollinearity is no longer an issue.
+
+2. Consider the carsales.csv dataset which contains the following variables:
+
+- year: the year the car was made
+
+- selling_price: the amount the car was sold for
+
+- km_driven: the number of kilometers on the odometer
+
+- fuel: the type of fuel used
+
+- seller_type: whether or not the individual bought the car from another individual or from a dealership
+
+- transmission: the transmission type
+
+- owner: ordinal variable describing the number of people who have owned the car
+
+Consider a model that predicts the car's selling price based on number of kilometers driven, the transmission type, and an interaction term between the two.
+```{r}
+carsales <- read.csv("../data/carsales.csv")
+mod_full <- lm(selling_price ~ transmission*km_driven,carsales)
+summary(mod_full)
+```
+$\hat{CarSales} = 1,685,000 - 1,194,000transManual - 5.523km + 4.192transManual\times km$
+
+- Automatic Transmission: $\hat{CarSales} = 1,685,000 - 5.523km$
+
+- Manual Transmission: $\hat{CarSales} = 1,685,000 - 1,194,000 - 5.523km + 4.192km$
+
+a. Interpret the parameter associated with the variable transmissionmanual in the context of the problem.
+
+- This parameter represents the difference in the intercepts for the least squares regerssion lines between automatic and manual transmissions.  When there are no kilometers on the car's odometer, the predicted sales price for a car with a manual transmission is 1.194 million Yen less than a car with an automatic transmission.
+
+b. Interpret the parameter associated with the interaction term in the context of the problem.
+
+- This parameter represents the difference in the slopes for the least squares regression lines.  When the number of kilometers on a car increases by 1, the predicted sales price for a car with a manual transmission increases by 4.192 Yen more than a car with an automatic transmission.
+
+c. Perform a formal hypothesis test to determine if the linear relationship between kilometers driven and sales price is different for the different transmission types.  Assume $\alpha = 0.05$. (I want to test the interaction term(s)).
+
+- Reduced Model: $\hat{Charges} = \beta_0 + \beta_1 transManual + \beta_2 km$
+
+- Full Model: $\hat{Charges} = \beta_0 + \beta_1 transManual + \beta_2 km + \beta_3 transManual \times km$
+
+$$H_0:\beta_3 = 0$$
+$$H_a:\beta_3 \neq 0$$
+```{r}
+mod_red <- lm(selling_price ~ km_driven + transmission,carsales)
+anova(mod_red,mod_full)
+```
+$F = 44.67$, $p = 2.631 \times 10^{-11} < \alpha$, so we reject $H_0$ and so we can conclude that the linear relationship between sales price and kilometers driven is significantly different between manual and automatic transmissions.
+
+d. Perform a formal hypothesis test to determine if adding fuel type or number of owners to the linear model with kilometers driven, the transmission type, and an interaction term between the two is statistically significant.  What are the degrees of freedom for the model and the error in this hypothesis test?
+
+- Reduced Model: $\hat{salesprice} = \beta_0 + \beta_1 km + \beta_2 transManual + \beta_3 km \times transManual$
+
+- Full Model: $\hat{salesprice} = \beta_0 + \beta_1 km + \beta_2 transManual + \beta_3 km \times transManual + \beta_4 fuelDiesel + \beta_5 fuelLPG + \beta_6 fuelPetrol + \beta_7ownerFourPlus + \beta_8 ownerSecond +  \beta_9 ownerTest + \beta_{10}ownerThird$
+
+$$H_0: \beta_4 = \cdots = \beta_{10} = 0$$
+$$H_a: \text{At least one } \beta \neq 0$$
+
+```{r}
+mod_red <- lm(selling_price ~ km_driven*transmission, carsales)
+mod_full <- lm(selling_price ~ km_driven*transmission + fuel + owner,carsales)
+summary(mod_full)
+anova(mod_red,mod_full)
+```
+$F = 120.72$, $p < 2.2 \times 10^{-16} < \alpha$, so we reject $H_0$ and conclude that adding fuel type and number of owners to a linear model that already includes kilometers driven, transmission type, and an interaction between kilometers driven and transmission type significantly improves the predictive ability of car sales price.
+
+e. What percent of variation in car sales price can be explained by adding fuel type and number of owner to our linear model from the beginning of the problem?
+```{r}
+summary(mod_full)$r.squared - summary(mod_red)$r.squared
+```
+- 11.34%
+
+f. If I were to add interaction terms between kilometers driven and number of owners to the model, how many explanatory variables would be added to the model?
+
+- 1 (Add one explanatory variable for kilometers driven) $\times$ 4 (Number of explanatory variables added with number of owners) = 4
+
+g. Determine if the assumptions of homoskedasticity and normally distributed residuals are violated.
+```{r}
+plot(mod_full,1)
+plot(mod_full,2)
+```
+- The residuals tend to get more spread out as the fitted values get larger (horn shape), so the assumption of homoskedasticity appears to be violated.
+
+- The points between -2 and 2 in the QQ plot appear to fall close to the 45-degree line, put veer off significantly when the x-axis goes above 2, so the assumption of normality appears to be violated.
+

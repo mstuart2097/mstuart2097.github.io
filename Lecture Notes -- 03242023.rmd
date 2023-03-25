@@ -1,0 +1,141 @@
+```{r setup, include = TRUE}
+# This line of code tells the document all the display defaults
+
+knitr::opts_chunk$set(echo = TRUE, cache = TRUE, include = TRUE, fig.align="center",warnings = FALSE,fig.width = 5,fig.height=3)
+```
+
+# Background Information
+
+We have discussed multiple linear regression methods, where we fit a linear regression model to a particular response variable of interest to a variety of explanatory variables, both numeric and categorical.  We have discussed methods of checking to see if the assumptions of homoscedasticity and normally distributed residuals are met.  We will now discuss methods of how we can still perform linear regression analysis even when these assumptions are not met.
+
+## Motivating Example
+
+Consider the dataset *Boston* available in the package *MASS*.
+
+- Let's look at the variables in the dataset
+
+```{r}
+library(MASS)
+```
+
+With multiple linear regression, we have discussed the various assumptions needed to perform regression analysis.  Combining these assumptions, with a response variable $Y$ and $p-1$ explanatory variables, $X_1,X_2,\dots,X_{p-1}$, we have that $$Y \sim \mathcal{N}\left(\beta_0 + \beta_1X_1 + \cdots + \beta_{p-1}X_{p-1},\sigma^2\right),$$ where we assume that all of the values are normally distributed with a linear mean structure and common variance.
+
+However, let's perform a linear regression analysis for the median value of owner-occupied homes with crime rate as a covariate and check to see if the assumptions of homoscedasticity and normally distributed residuals are met.
+
+```{r}
+mod_full <- lm(medv ~ crim,Boston)
+summary(mod_full)
+plot(mod_full,1)
+plot(mod_full,2)
+```
+- The residual and QQ plots both suggest that the assumptions of normality and homoskedasticity are violated, meaning the result of a statistically significant linear relationship between median home value and crime rate is invalid.
+
+How can we combat this?
+
+**Transformation**: Inputting the response variable ($Y$) into a function to obtain a new response ($\tilde{Y}$) that more closely meets the assumptions for a linear regression model.
+
+Common Types of transformations of a response variable:
+
+- Log-Transformation ($\tilde{Y} = \log(Y), Y > 0$): (Note: when I say log, I am referring to the natural logarithm)
+
+  - stabilizes the variance if the variability increases significantly with any $X$ (witnessing a horn shape in the residual plot)
+  - normalizes the variable if it is highly right skewed (many points on the upper end of QQ-plot are above the 45-degree line)
+  - linearizes the relationship if the relationship between $X$ and $Y$ appears to be exponential (look at this via a scatterplot)
+  
+- Square Root-Transformation ($\tilde{Y} = \sqrt{Y}, Y \geq 0$): 
+
+  - stabilizes the variance if the variance is proportional to the mean (i.e. $\text{sd}(Y | X_1,\dots,X_p) = c\text{E}(Y | X_1,\dots,X_p)$ where $c$ is a constant)
+  
+- Squared-Transformation ($\tilde{Y} = Y^2$): 
+
+  - stabilizes the variance if the variance is decreases significantly with any $X$ (horn is pointing left in the residual plot)
+  
+  The method of finding the regression estimates $\hat{\beta}_0,\hat{\beta}_1,\dots,\hat{\beta}_p$ is still minimizing the sum of squared errors:
+
+$$\sum_{i=1}^n \left(\tilde{y}_i - (\hat{\beta}_0 + \hat{\beta}_1x_{i1} + \cdots + \hat{\beta}_{p-1}x_{i,p-1})\right)^2$$
+  
+### Example
+
+Perform a least squares regression analysis for the natural log of median home value with crime rate as the only explanatory variable by answering the following questions:
+
+a.  Write out the least squares regression line:
+```{r}
+mod_full <- lm(log(medv) ~ crim,Boston)
+summary(mod_full)
+```
+$\hat{\log(medv)} = 3.125 - 0.025 crim$
+
+b.  Interpret the slope of the least squares regression line in the context of the given problem.
+
+- When crime rate increases by 1 percent, the predicted log median home value decreases by 0.025 log-thousand dollars.
+
+c.  Perform an F-test to determine a linear model with crime rate significantly improves the predictive ability of log median home value.
+
+- Reduced Model: $\hat{\log(medv)} = \beta_0$
+
+- Full Model: $\hat{\log(medv)} = \beta_0 + \beta_1 crim$
+
+$$H_0: \beta_1 = 0$$
+
+$$H_a: \beta_1 \neq 0$$
+
+```{r}
+```
+
+d. What is the predicted median home value in a Boston neighbor hood with a 
+```{r}
+```
+
+e.  Check to see if the assumptions of homoscedasticity and normally distibuted residuals are met for this transformed linear model.
+```{r}
+```
+
+The scatterplot for the log transformation appears to fit the data better, but there does seem to be a little bit of curvature of the mean curve (red line) in the residual plot.  How can we adjust our model to account for this curvature?
+
+**Polynomial Regression**: Extension of a linear regression model where we now allow for quadratic, cubic, and higher-order terms in our regression model.  If we have a single explanatory variable $X$, then we can have
+$$Y \sim \mathcal{N}\left(\beta_0 + \beta_1 X + \beta_2 X^2 + \dots + \beta_p X^p,\sigma^2\right)$$ or if $Y$ is transformed
+$$\tilde{Y} \sim \mathcal{N}\left(\beta_0 + \beta_1 X + \beta_2 X^2 + \dots + \beta_p X^p,\sigma^2\right)$$
+
+The method of finding the regression estimates $\hat{\beta}_0,\hat{\beta}_1,\dots,\hat{\beta}_p$ is still minimizing the sum of squared errors:
+
+$$\sum_{i=1}^n \left(y_i - (\hat{\beta}_0 + \beta_1 x_i + \beta_2 x_i^2 + \dots + \beta_p x_i^p)\right)^2$$
+
+### Example
+
+Perform a least squares regression analysis for log median home value with a linear and quadratic term for crime rate by answering the following questions:
+
+a.  Write out the least squares regression line:
+```{r}
+```
+
+b.  Perform an F-test to determine if a polynomial model with a linear and  quadratic term for crime rate significantly improves the predictive ability of log median home value.
+
+```{r}
+```
+c.  Perform an F-test to determine if adding a quadratic term to a least squares regression line which already includes a linear term significantly improves the predictive ability of log median home value.
+
+```{r}
+```
+
+
+d.  Check to see if the assumptions of homoscedasticity and normally distributed residuals are met for this transformed polynomial model.
+```{r}
+```
+
+The residuals appear to be randomly scattered around zero with an even spread, so the assumption of homoscedasticity does not appear to be violated.
+
+The points on the QQ plot appear to lie close to the 45-degree line in the center part of the plot, with some slight deviance in the tails.  To me, the assumption of normally distributed residuals does not appear to be violated.
+
+### Example
+
+Perform an F-test to determine if adding a cubic term to a least squares regression line which already includes linear and quadratic terms significantly improves the predictive ability of log median home value.
+
+```{r}
+```
+
+*Remarks*
+
+- To determine if you should transform the random variable, you should check the residual and QQ plots to determine if the assumptions for homoskedasticity and normality are met.
+
+- To determin if you should add polynomial terms to the model, look at the scatterplot of the particular explanatory variable with the response variable.
+
