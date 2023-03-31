@@ -1,0 +1,31 @@
+
+```{r setup, include=FALSE}
+knitr::opts_chunk$set(echo = TRUE, include = TRUE,
+fig.align="center",warnings = FALSE,fig.width = 5,fig.height=3)
+```
+
+1. Consider the dataset mtcars available in R
+
+a. Determine what the "best" regression model for predicting fuel efficiency is with all of the other variables included in the maximum model.  Use backward selection to choose your model.  Assume no polynomial or interaction terms.
+
+```{r}
+```
+
+b. Does this model meet the assumptions of homoskedasticity and normality?
+```{r}
+```
+
+c. Is there any issue with multicollinearity with this model?
+```{r}
+```
+
+d. Determine what the "best" regression model for predicting fuel efficiency is when you include any polynomial terms that you deem to be important to include in the maximum model  Be liberal in terms of what polynomial terms you include.  Use stepwise selection to choose your model.
+```{r}
+```
+
+e. Is there any issue of multicollinearity with this model?
+```{r}
+```
+
+
+
