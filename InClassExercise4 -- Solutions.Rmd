@@ -1,0 +1,51 @@
+
+```{r setup, include=FALSE}
+knitr::opts_chunk$set(echo = TRUE, include = TRUE,
+fig.align="center",warnings = FALSE,fig.width = 5,fig.height=3)
+```
+
+1. Consider the dataset mtcars available in R
+
+a. Determine what the "best" regression model for predicting fuel efficiency is with all of the other variables included in the maximum model.  Use backward selection to choose your model.  Assume no polynomial or interaction terms.
+```{r}
+mod_max <- lm(mpg ~ .,mtcars)
+mod_best <- step(mod_max) # step chooses backwards by default
+summary(mod_best)
+```
+
+First, we eliminate number of cylinders, then engine, then number of carbeuretors, then number of forward gears, then rear axle ratio, and then displacement, and finally horsepower.
+
+"Best Model": $\hat{mpg} = 9.618 - 3.917 wt + 1.226 qsec + 2.936 am$
+
+b. Does this model meet the assumptions of homoskedasticity and normality?
+```{r}
+plot(mod_best,1)
+plot(mod_best,2)
+```
+The residual plot and QQ plot do not show any significant reason to not assume normality or homoskedasticity.
+
+c. Is there any issue with multicollinearity with this model?
+```{r}
+library(regclass)
+VIF(mod_best)
+```
+All of the VIFs are below 5, so no major issue of multicollinearity.
+
+d. Determine what the "best" regression model for predicting fuel efficiency is when you include any polynomial terms that you deem to be important to include in the maximum model  Be liberal in terms of what polynomial terms you include.  Use stepwise selection to choose your model.
+```{r}
+plot(mpg ~ wt,mtcars)
+plot(mpg ~ qsec,mtcars)
+plot(mpg ~ disp,mtcars)
+plot(mpg ~ hp,mtcars)
+# These are the variables we include quadratic terms for
+mod_max <- lm(mpg ~ . + I(wt^2) + I(qsec^2) + I(disp^2) + I(hp^2),mtcars)
+mod_best <- step(mod_max,direction="both")
+```
+
+e. Is there any issue of multicollinearity with this model?
+```{r}
+VIF(mod_best)
+```
+- Variable selection does not always eliminate issues of multicollinearity.
+
+
