@@ -1,0 +1,93 @@
+---
+title: "Logistic Regression"
+author: "Matt Stuart"
+date: "2023-04-14"
+output: html_document
+---
+
+```{r setup, include=FALSE}
+knitr::opts_chunk$set(echo = TRUE)
+```
+
+## Logistic Regression
+
+**Generalized Linear Model**: An extension of the linear regression methods discussed throughout the semester, without the need for the homoskedasticity or normality assumptions
+
+- Linear Regression, Polynomial Regression, Logistic Regression, etc. are all examples of generalized linear models.
+
+We will discuss ways to interpret logistic regression models using the Titanic dataset from the course webpage.
+
+*Note*: Survived = 1 means the passenger survived the crash, and Survived = 0 means they did not
+
+*Note*: There was room on the boat for Jack!
+
+```{r}
+Titanic <- read.csv("../data/Titanic.csv")
+Titanic <- na.omit(Titanic) #Remove any rows with missing data
+```
+
+- We believe that age, sex, and passenger class are the most important explanatory variables that can be used to predicted whether or not a passenger survived.
+
+- Let's fit a logistic regression model for the Titanic dataset where we want to predict survival rate of passengers by their age, sex, and passenger class.
+
+```{r}
+# glm is the function we use for a generalized linear model
+# glm by default assumes traditional linear regression
+# to use logistic regression, we have to specific a different family of distribution
+# specifically, we use the binomial distribution
+# R by default uses the logit as the activation/link function
+mod <- glm(Survived ~ Sex + Age + as.character(Pclass), # turning Pclass to a categorical variable
+           data = Titanic,
+           family = "binomial")
+summary(mod)
+```
+- Estimated logistic model:
+
+$logit(\hat{p}) = log(\frac{\hat{p}}{1 - \hat{p}}) = 3.777 - 2.523 Male - 0.03670Age - 1.310 Class2 - 2.581 Class3$
+
+## Interpretation Logisitic Regression Estimates
+
+- The model parameters should always be interpreted in relationship to the **log odds** of the predicted probability.
+
+### Questions
+
+- Interpret the parameter estimate associated with Male in the context of the problem.
+
+When a passenger is a male instead of a female, the predicted log odds of their survival of the Titanic decreases by 2.523, holding age and passenger class constant. (No units on the change in the log odds).
+
+- Interpret the parameter estimate associated with Age in the context of the problem.
+
+For a one year increase in age, the predicted log odds of their survival of the Titanic decreases by 0.0367, holding gender and passenger class constant.
+
+- Predict the survival rate for a female passenger in class 1 aged 35.
+```{r}
+# Can use predict function for glms as well
+newdata <- data.frame(Age = 35,Pclass = 1, Sex = "female")
+predict(mod,newdata)
+# The predict function gives us the log odds prediction
+# Need to input into a different function to get probability
+# I will show you how to write your own function in R
+invlogit <- function(x){exp(x)/(1 + exp(x))}
+logodds <- predict(mod,newdata)
+invlogit(logodds)
+```
+The predicted probability that a 35 year old woman in Class 1 survived the Titanic crash is 0.9229.
+
+## Hypothesis Testing in Logistic Regression
+
+- We cannot use the t-test or the F-test because we do not assume the data are normally distributed
+
+- We will use likelihoods to perform hypothesis tests
+
+**Log-likelihoods**: An evaluation of how likely the value of a regression parameter is for the given set of data
+
+- Related to the SSE in linear regression analysis
+
+- The larger the log-likelihood, the better our generalized linear model is at making predictions
+
+In the summary of a glm, the output gives us two deviance values:
+
+- **Null Deviance**: -2*loglikelihood for the glm with no explanatory variables ($df_{Null} = n - 1$)
+
+- **Residual Deviance**: - 2*loglikelihood for the glm with the given explanatory variables ($df_{res} = n - p$, $p$ is the number of parameters in the model)
+
