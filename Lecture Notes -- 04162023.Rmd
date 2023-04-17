@@ -1,0 +1,176 @@
+---
+title: "Logistic Regression"
+author: "Matt Stuart"
+date: "2023-04-14"
+output: html_document
+---
+
+```{r setup, include=FALSE}
+knitr::opts_chunk$set(echo = TRUE)
+```
+
+## Logistic Regression
+
+**Generalized Linear Model**: An extension of the linear regression methods discussed throughout the semester, without the need for the homoskedasticity or normality assumptions
+
+- Linear Regression, Polynomial Regression, Logistic Regression, etc. are all examples of generalized linear models.
+
+We will discuss ways to interpret logistic regression models using the Titanic dataset from the course webpage.
+
+*Note*: Survived = 1 means the passenger survived the crash, and Survived = 0 means they did not
+
+*Note*: There was room on the boat for Jack!
+
+```{r}
+Titanic <- read.csv("../data/Titanic.csv")
+Titanic <- na.omit(Titanic) #Remove any rows with missing data
+```
+
+- We believe that age, sex, and passenger class are the most important explanatory variables that can be used to predicted whether or not a passenger survived.
+
+- Let's fit a logistic regression model for the Titanic dataset where we want to predict survival rate of passengers by their age, sex, and passenger class.
+
+```{r}
+# glm is the function we use for a generalized linear model
+# glm by default assumes traditional linear regression
+# to use logistic regression, we have to specific a different family of distribution
+# specifically, we use the binomial distribution
+# R by default uses the logit as the activation/link function
+mod <- glm(Survived ~ Sex + Age + as.character(Pclass), # turning Pclass to a categorical variable
+           data = Titanic,
+           family = "binomial")
+summary(mod)
+```
+- Estimated logistic model:
+
+$logit(\hat{p}) = log(\frac{\hat{p}}{1 - \hat{p}}) = 3.777 - 2.523 Male - 0.03670Age - 1.310 Class2 - 2.581 Class3$
+
+## Interpretation Logisitic Regression Estimates
+
+- The model parameters should always be interpreted in relationship to the **log odds** of the predicted probability.
+
+### Questions
+
+- Interpret the parameter estimate associated with Male in the context of the problem.
+
+When a passenger is a male instead of a female, the predicted log odds of their survival of the Titanic decreases by 2.523, holding age and passenger class constant. (No units on the change in the log odds).
+
+- Interpret the parameter estimate associated with Age in the context of the problem.
+
+For a one year increase in age, the predicted log odds of their survival of the Titanic decreases by 0.0367, holding gender and passenger class constant.
+
+- Predict the survival rate for a female passenger in class 1 aged 35.
+```{r}
+# Can use predict function for glms as well
+newdata <- data.frame(Age = 35,Pclass = 1, Sex = "female")
+predict(mod,newdata)
+# The predict function gives us the log odds prediction
+# Need to input into a different function to get probability
+# I will show you how to write your own function in R
+invlogit <- function(x){exp(x)/(1 + exp(x))}
+logodds <- predict(mod,newdata)
+invlogit(logodds)
+```
+The predicted probability that a 35 year old woman in Class 1 survived the Titanic crash is 0.9229.
+
+## Hypothesis Testing in Logistic Regression
+
+- We cannot use the t-test or the F-test because we do not assume the data are normally distributed
+
+- We will use likelihoods to perform hypothesis tests
+
+**Log-likelihoods**: An evaluation of how likely the value of a regression parameter is for the given set of data
+
+- Related to the SSE in linear regression analysis
+
+- The larger the log-likelihood, the better our generalized linear model is at making predictions
+
+- R finds the estimates of the parameters by maximizing the log-likelihood
+
+In the summary of a glm, the output gives us two deviance values:
+
+- **Null Deviance**: $2 \times$ loglikelihood for saturated model - $2\times $loglikelihood for the glm with no explanatory variables ($df_{Null} = n - 1$)
+
+- **Residual Deviance**: $2 \times$ loglikelihood for saturated model - 2*loglikelihood for the glm with the given explanatory variables ($df_{res} = n - p$, $p$ is the number of parameters in the model)
+
+- **Saturated Model**: Model where every observation has its own unique prediction ($n$ explanatory variables)
+
+## How to find null and alternative hypotheses in logistic regression?
+
+- Find the reduced and full models just like you did for linear regression.
+
+### Example
+
+Find the null and alternative hypotheses to test if the logistic regression model for predicting Titanic survival rate by gender, age, and passenger class is statistically significant.
+
+- Reduced Model: $logit(\hat{Survived}) = \beta_0$ *Note*: This is no different than testing for overall significance of a traditional linear model
+
+- Full Model: $logit(\hat{Survived}) = \beta_0 + \beta_1 Male + \beta_2 Age + \beta_3 PClass2 + \beta_4 PClass3$
+
+$$H_0: \beta_1 = \cdots = \beta_4 = 0$$
+$$H_a: \text{At least one } \beta \neq 0$$
+## Finding the test statistic and p-value
+
+Test statistic for overall significance of a logistic regression model is $C = $Null Deviance - Residual Deviance.
+
+P-value: We know that the null deviance has $n-1$ degrees of freedom, and the residual deviance has $n-p$ degrees of freedom.  If $n$ is sufficiently large, then $$NullDeviance - ResidualDeviance \sim \chi^2_{df = p-1}$$.  The difference between the null and residual deviances follows a chi-squared distribution with $p-1$ degrees of freedom.
+
+- Recall from F tests, we calculated the probability that the F distribution was greater than our test statistic.  Similarly, the p-value for overall significance of a logistic regression model is $$p-value = P(\chi^2_{df=p-1} > C)$$
+
+- degrees of freedom is the difference in the df between the null deviance and the residual deviance.
+
+### Example
+
+Find the test statistic and p-value for the overall hypothesis test described above.
+
+```{r}
+summary(mod)
+nulldev <- 964.52
+resdev <- 647.28
+C <- nulldev - resdev
+C
+nulldf <- 713
+resdf <- 709
+df_test <- nulldf - resdf
+# pchisq calculates a probability from a chi-squared distribution
+pval <- pchisq(C,df=df_test,lower.tail=FALSE)
+pval
+```
+$C = 317.24$, $p = 2.067 \times 10^{-67}$, $p < \alpha = 0.05$, so we reject $H_0$ and we conclude that the logistic regression model for predicting Titanic survival rate that includes gender, age, and passenger class is statistically significant.
+
+### Example
+
+Suppose we know that gender and age are significant variables in a logistic regression model predicting survival rate of Titanic passengers.  Determine if adding passenger class to the logistic regression model is statistically significant.
+
+- Reduced Model: $logit(\hat{survived}) = \beta_0 + \beta_1 Male + \beta_2 Age$
+
+- Full Model: $logit(\hat{survived}) = \beta_0 + \beta_1 Male + \beta_2 Age + \beta_3 PClass2 + \beta_4 PClass3$
+
+$$H_0: \beta_3 = \beta_4 = 0$$
+$$H_a: \text{At least one } \beta \neq 0$$
+
+
+```{r}
+mod_red <- glm(Survived ~ Sex + Age,data=Titanic,family="binomial")
+summary(mod_red)
+summary(mod)
+```
+- The null deviance will be the same for both the reduced and the full model because they include no explanatory variables
+
+- For our test statistic and p-value, we want to compare the residual deviances for the reduced model and the full model
+
+Test statistic: $C = ResdiualDeviance_{reduced} - ResidualDeviance_{full}$
+
+- You can use the ANOVA function in R to compare two different logistic regression models, and get the test statistic directly!
+
+```{r}
+mod_full <- glm(Survived ~ Sex + Age + as.character(Pclass),data=Titanic,family="binomial")
+anova(mod_red,mod_full)
+```
+$C = 102.67$ from the ANOVA table, $df = 2$
+
+```{r}
+pval <- pchisq(102.67,df=2,lower.tail=FALSE)
+pval
+```
+$p = 5.076 \times 10^{-23} < \alpha$, so we reject $H_0$, and we conclude that adding passenger class to a logistic regression model predicting Titanic survival rate that already includes gender and age is statistically significant.
